@@ -4,6 +4,10 @@ type Query {
   feed: Feed!
 }
 
+type Mutation {
+  askQuestion(title: String!, description: String!): Question!
+}
+
 type Feed {
   questions: [Question!]!
   count: Int!
