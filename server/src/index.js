@@ -9,6 +9,7 @@ const Feed = require('./resolvers/Feed')
 const resolvers = {
   Query,
   Mutation,
+  Subscription,
   Feed
 }
 

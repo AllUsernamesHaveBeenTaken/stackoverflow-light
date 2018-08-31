@@ -1,4 +1,4 @@
-# import Question from './generated/prisma.graphql'
+# import Question, QuestionSubscriptionPayload from './generated/prisma.graphql'
 
 type Query {
   feed(filter: String): Feed!
@@ -6,6 +6,10 @@ type Query {
 
 type Mutation {
   askQuestion(title: String!, description: String!): Question!
+}
+
+type Subscription {
+  newQuestion: QuestionSubscriptionPayload
 }
 
 type Feed {
