@@ -15,7 +15,7 @@ async function feed(parent, args, context, info) {
 
   return {
     count: questionsConnection.aggregate.count,
-    questionIds: queriedQuestions.map(link => link.id)
+    questionIds: queriedQuestions.map(question => question.id)
   }
 }
 
