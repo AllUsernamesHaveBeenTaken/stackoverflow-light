@@ -1,0 +1,6 @@
+type Question {
+  id: ID! @unique
+  title: String!
+  description: String
+  createdAt: DateTime!
+}
