@@ -5,11 +5,13 @@ const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
 const Subscription = require('./resolvers/Subscription')
 const Feed = require('./resolvers/Feed')
+const AuthPayload = require('./resolvers/AuthPayload')
 
 const resolvers = {
   Query,
   Mutation,
   Subscription,
+  AuthPayload,
   Feed
 }
 
