@@ -1,7 +1,7 @@
 # import Question from './generated/prisma.graphql'
 
 type Query {
-  feed: Feed!
+  feed(filter: String): Feed!
 }
 
 type Mutation {
