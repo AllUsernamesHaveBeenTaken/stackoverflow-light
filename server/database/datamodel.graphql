@@ -4,6 +4,7 @@ type Question {
   description: String
   createdAt: DateTime!
   askedBy: User
+  votes: [QuestionVote!]! 
 }
 
 type User {
@@ -13,4 +14,12 @@ type User {
   password: String!
   createdAt: DateTime!
   questions: [Question!]!
+  questionVotes: [QuestionVote!]!
+}
+
+type QuestionVote {
+  id: ID! @unique
+  isUpVote: Boolean!
+  question: Question!
+  user: User!
 }

@@ -42,6 +42,7 @@ async function login(parent, args, context, info) {
 
 function askQuestion(parent, args, context, info) {
   const userId = authorize(context)
+  
   return context.db.mutation.createQuestion(
     {
       data: {
@@ -54,9 +55,51 @@ function askQuestion(parent, args, context, info) {
   )
 }
 
+async function voteOnQuestion(parent, args, context, info) {
+  const userId = authorize(context)
+  
+  const questionExists = await context.db.exists.QuestionVote({
+    user: { id: userId },
+    question: { id: args.questionId }
+  })
+
+  if (questionExists) {
+    const vote = await context.db.query.questionVotes(
+      {
+        where: {
+          AND: [
+            { user: { id: userId } } ,
+            { question: { id: args.questionId } }
+          ]
+        }
+      },
+      '{ id }'
+    )
+
+    return context.db.mutation.deleteQuestionVote(
+      {
+        where: { id: vote[0].id }
+      },
+      info
+    )
+  }
+
+  return context.db.mutation.createQuestionVote(
+    {
+      data: {
+        user: { connect: { id: userId } },
+        question: { connect: { id: args.questionId } },
+        isUpVote: args.isUpVote
+      }
+    },
+    info
+  )
+}
+
 module.exports = {
   signup,
   login,
-  askQuestion  
+  askQuestion,
+  voteOnQuestion
 }
 

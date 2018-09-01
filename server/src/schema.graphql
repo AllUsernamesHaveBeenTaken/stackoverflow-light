@@ -1,4 +1,4 @@
-# import Question, QuestionSubscriptionPayload, User from './generated/prisma.graphql'
+# import Question, QuestionSubscriptionPayload, User, QuestionVote from './generated/prisma.graphql'
 
 type Query {
   feed(filter: String): Feed!
@@ -8,6 +8,7 @@ type Mutation {
   signup(username: String!, email: String!, password: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   askQuestion(title: String!, description: String!): Question!
+  voteOnQuestion(questionId: ID!, isUpVote: Boolean!): QuestionVote
 }
 
 type Subscription {
