@@ -41,12 +41,13 @@ async function login(parent, args, context, info) {
 
 
 function askQuestion(parent, args, context, info) {
-  authorize(context)
+  const userId = authorize(context)
   return context.db.mutation.createQuestion(
     {
       data: {
         title: args.title,
-        description: args.description
+        description: args.description,
+        askedBy: { connect: { id: userId } }
       }
     },
     info

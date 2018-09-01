@@ -3,6 +3,7 @@ type Question {
   title: String!
   description: String
   createdAt: DateTime!
+  askedBy: User
 }
 
 type User {
@@ -11,4 +12,5 @@ type User {
   email: String! @unique
   password: String!
   createdAt: DateTime!
+  questions: [Question!]!
 }

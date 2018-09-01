@@ -1,5 +1,5 @@
 # source: https://eu1.prisma.sh/seppesnoeck/stackoverflow-light/dev
-# timestamp: Fri Aug 31 2018 20:08:50 GMT+0200 (CEST)
+# timestamp: Sat Sep 01 2018 14:23:34 GMT+0200 (CEST)
 
 type AggregateQuestion {
   count: Int!
@@ -84,6 +84,7 @@ type Question implements Node {
   title: String!
   description: String
   createdAt: DateTime!
+  askedBy(where: UserWhereInput): User
 }
 
 """A connection to a list of items."""
@@ -97,6 +98,17 @@ type QuestionConnection {
 }
 
 input QuestionCreateInput {
+  title: String!
+  description: String
+  askedBy: UserCreateOneWithoutQuestionsInput
+}
+
+input QuestionCreateManyWithoutAskedByInput {
+  create: [QuestionCreateWithoutAskedByInput!]
+  connect: [QuestionWhereUniqueInput!]
+}
+
+input QuestionCreateWithoutAskedByInput {
   title: String!
   description: String
 }
@@ -172,6 +184,32 @@ input QuestionSubscriptionWhereInput {
 input QuestionUpdateInput {
   title: String
   description: String
+  askedBy: UserUpdateOneWithoutQuestionsInput
+}
+
+input QuestionUpdateManyWithoutAskedByInput {
+  create: [QuestionCreateWithoutAskedByInput!]
+  connect: [QuestionWhereUniqueInput!]
+  disconnect: [QuestionWhereUniqueInput!]
+  delete: [QuestionWhereUniqueInput!]
+  update: [QuestionUpdateWithWhereUniqueWithoutAskedByInput!]
+  upsert: [QuestionUpsertWithWhereUniqueWithoutAskedByInput!]
+}
+
+input QuestionUpdateWithoutAskedByDataInput {
+  title: String
+  description: String
+}
+
+input QuestionUpdateWithWhereUniqueWithoutAskedByInput {
+  where: QuestionWhereUniqueInput!
+  data: QuestionUpdateWithoutAskedByDataInput!
+}
+
+input QuestionUpsertWithWhereUniqueWithoutAskedByInput {
+  where: QuestionWhereUniqueInput!
+  update: QuestionUpdateWithoutAskedByDataInput!
+  create: QuestionCreateWithoutAskedByInput!
 }
 
 input QuestionWhereInput {
@@ -325,6 +363,7 @@ input QuestionWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  askedBy: UserWhereInput
 }
 
 input QuestionWhereUniqueInput {
@@ -342,6 +381,7 @@ type User implements Node {
   email: String!
   password: String!
   createdAt: DateTime!
+  questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
 }
 
 """A connection to a list of items."""
@@ -355,6 +395,18 @@ type UserConnection {
 }
 
 input UserCreateInput {
+  username: String!
+  email: String!
+  password: String!
+  questions: QuestionCreateManyWithoutAskedByInput
+}
+
+input UserCreateOneWithoutQuestionsInput {
+  create: UserCreateWithoutQuestionsInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateWithoutQuestionsInput {
   username: String!
   email: String!
   password: String!
@@ -435,6 +487,27 @@ input UserUpdateInput {
   username: String
   email: String
   password: String
+  questions: QuestionUpdateManyWithoutAskedByInput
+}
+
+input UserUpdateOneWithoutQuestionsInput {
+  create: UserCreateWithoutQuestionsInput
+  connect: UserWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: UserUpdateWithoutQuestionsDataInput
+  upsert: UserUpsertWithoutQuestionsInput
+}
+
+input UserUpdateWithoutQuestionsDataInput {
+  username: String
+  email: String
+  password: String
+}
+
+input UserUpsertWithoutQuestionsInput {
+  update: UserUpdateWithoutQuestionsDataInput!
+  create: UserCreateWithoutQuestionsInput!
 }
 
 input UserWhereInput {
@@ -628,6 +701,9 @@ input UserWhereInput {
 
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
+  questions_every: QuestionWhereInput
+  questions_some: QuestionWhereInput
+  questions_none: QuestionWhereInput
 }
 
 input UserWhereUniqueInput {
