@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { APP_SECRET } = require('../utils')
+const { APP_SECRET, authorize } = require('../utils')
 
 async function signup(parent, args, context, info) {
   const password = await bcrypt.hash(args.password, 10)
@@ -41,6 +41,7 @@ async function login(parent, args, context, info) {
 
 
 function askQuestion(parent, args, context, info) {
+  authorize(context)
   return context.db.mutation.createQuestion(
     {
       data: {
