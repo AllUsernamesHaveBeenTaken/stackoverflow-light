@@ -1,0 +1,7 @@
+endpoint: https://eu1.prisma.sh/seppesnoeck/stackoverflow-light/dev
+datamodel: datamodel.graphql
+secret: C453ITP
+
+hooks:
+  post-deploy:
+    - graphql get-schema --project database
