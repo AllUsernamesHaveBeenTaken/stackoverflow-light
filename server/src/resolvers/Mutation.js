@@ -17,6 +17,29 @@ async function signup(parent, args, context, info) {
   }
 }
 
+
+async function login(parent, args, context, info) {
+  const user = await context.db.query.user({ where: { email: args.email } }, ` { id password } `)
+
+  if (!user) {
+    throw new Error('Credentials are incorrect')
+  }
+
+  const valid = await bcrypt.compare(args.password, user.password)
+
+  if (!valid) {
+    throw new Error('Credentials are incorrect')
+  }
+
+  const token = jwt.sign({ userId: user.id }, APP_SECRET)
+
+  return {
+    token,
+    user,
+  }
+}
+
+
 function askQuestion(parent, args, context, info) {
   return context.db.mutation.createQuestion(
     {
@@ -30,7 +53,8 @@ function askQuestion(parent, args, context, info) {
 }
 
 module.exports = {
-  askQuestion,
-  signup
+  signup,
+  login,
+  askQuestion  
 }
 
