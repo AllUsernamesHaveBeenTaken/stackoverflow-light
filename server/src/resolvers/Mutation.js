@@ -58,12 +58,12 @@ function askQuestion(parent, args, context, info) {
 async function voteOnQuestion(parent, args, context, info) {
   const userId = authorize(context)
   
-  const questionExists = await context.db.exists.QuestionVote({
+  const voteExists = await context.db.exists.QuestionVote({
     user: { id: userId },
     question: { id: args.questionId }
   })
 
-  if (questionExists) {
+  if (voteExists) {
     const vote = await context.db.query.questionVotes(
       {
         where: {
@@ -73,8 +73,21 @@ async function voteOnQuestion(parent, args, context, info) {
           ]
         }
       },
-      '{ id }'
+      `{
+        id 
+        isUpVote
+      }`
     )
+
+    if (args.isUpVote !== vote[0].isUpVote) {
+      return context.db.mutation.updateQuestionVote(
+        {
+          data: { isUpVote: args.isUpVote },
+          where: { id: vote[0].id }          
+        },
+        info
+      )
+    }
 
     return context.db.mutation.deleteQuestionVote(
       {
