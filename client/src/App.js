@@ -3,13 +3,13 @@
 import React, { Component } from 'react';
 import './App.css';
 
-import QuestionItem from './components/Question';
+import { QuestionList } from './components/Question';
 
 class App extends Component {
   render() {
     return (
       <div>
-        <QuestionItem />
+        <QuestionList />
       </div>
     );
   }

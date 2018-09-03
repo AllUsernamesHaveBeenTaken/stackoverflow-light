@@ -1,4 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import TimeAgo from 'react-timeago';
 
 const wrapper = {
   display: 'flex',
@@ -36,8 +38,8 @@ const dateStyle = {
   fontSize: 12
 };
 
-const QuestionItem = ({ votes = 3, answers = 6, username = 'seppesnoeck', date = '55 seconds ago' }) => (
-  <div style={wrapper}>
+const QuestionItem = ({ votes, answers, username, date, title, style }) => (
+  <div style={{ ...wrapper, ...style }}>
     <div style={header}>
       <p style={{ ...headerTag, ...headerText }}>{`${votes} votes`}</p>
       <p style={{ ...headerTag, ...headerText }}>{`${answers} answers`}</p>
@@ -45,13 +47,31 @@ const QuestionItem = ({ votes = 3, answers = 6, username = 'seppesnoeck', date =
     </div>
     <div style={questionWrapper}>
       <div>
-        <p style={question}>Bootstrap Wizard Issues</p>
+        <p style={question}>{title}</p>
       </div>
       <div>
-        <p style={dateStyle}>{date}</p>
+        <TimeAgo style={dateStyle} date={date} />
       </div>
     </div>
   </div>
 );
+
+QuestionItem.propTypes = {
+  votes: PropTypes.number,
+  answers: PropTypes.number,
+  username: PropTypes.string,
+  date: PropTypes.string,
+  title: PropTypes.string,
+  style: PropTypes.objectOf
+};
+
+QuestionItem.defaultProps = {
+  votes: 0,
+  answers: 0,
+  username: 'No Username found',
+  date: 'No date found',
+  title: 'No title found',
+  style: {}
+};
 
 export default QuestionItem;
