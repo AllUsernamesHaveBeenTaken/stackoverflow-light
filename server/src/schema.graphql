@@ -1,4 +1,4 @@
-# import Question, QuestionSubscriptionPayload, User, QuestionVote from './generated/prisma.graphql'
+# import Question, QuestionSubscriptionPayload, User, QuestionVote, QuestionVoteSubscriptionPayload from './generated/prisma.graphql'
 
 type Query {
   feed(filter: String): Feed!
@@ -13,6 +13,7 @@ type Mutation {
 
 type Subscription {
   newQuestion: QuestionSubscriptionPayload
+  newQuestionVote: QuestionVoteSubscriptionPayload
 }
 
 type Feed {
