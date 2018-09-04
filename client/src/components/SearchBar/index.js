@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 
 import { FilterConsumer } from '../../Contexts/FilterContext';
 
@@ -11,17 +12,28 @@ const boxStyle = {
   outline: 'none'
 };
 
-const SearchBar = () => (
-  <FilterConsumer>
-    {({ filter, onChangeFilter }) => (
-      <input
-        style={boxStyle}
-        type="text"
-        value={filter}
-        onChange={({ target }) => onChangeFilter(target.value)}
-        placeholder="Search"
-      />
-    )}
-  </FilterConsumer>
-);
+class SearchBar extends PureComponent {
+  render() {
+    const { history } = this.props;
+    return (
+      <FilterConsumer>
+        {({ filter, onChangeFilter }) => (
+          <input
+            style={boxStyle}
+            type="text"
+            value={filter}
+            onChange={({ target }) => onChangeFilter(target.value)}
+            onKeyPress={({ key }) => key === 'Enter' && history.push('/')}
+            placeholder="Search"
+          />
+        )}
+      </FilterConsumer>
+    );
+  }
+}
+
+SearchBar.propTypes = {
+  history: PropTypes.shape({}).isRequired
+};
+
 export default SearchBar;

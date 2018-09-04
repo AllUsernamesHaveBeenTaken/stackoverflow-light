@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
+import PropTypes from 'prop-types';
 
 import SearchBar from '../SearchBar';
 import { AUTH_TOKEN } from '../../utils/constants';
@@ -45,13 +46,14 @@ class Navigation extends PureComponent {
   render() {
     const authToken = sessionStorage.getItem(AUTH_TOKEN);
 
+    const { history } = this.props;
     return (
       <div style={wrapper}>
         <Link style={logoText} to="/">
           <p>StackOverflow</p>
           <p style={logoLightText}>Light</p>
         </Link>
-        <SearchBar />
+        <SearchBar history={history} />
         <div>
           {authToken ? (
             <div>
@@ -81,5 +83,9 @@ class Navigation extends PureComponent {
     );
   }
 }
+
+Navigation.propTypes = {
+  history: PropTypes.shape({}).isRequired
+};
 
 export default withRouter(Navigation);
