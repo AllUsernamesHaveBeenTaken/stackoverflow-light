@@ -3,6 +3,7 @@ import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
 import QuestionItem from './Item';
+import { FilterConsumer } from '../../Contexts/FilterContext';
 
 const FEED_QUERY = gql`
   {
@@ -32,7 +33,7 @@ const questionStyle = {
   boxShadow: '0 1px 10px 0 rgba(0, 0, 0, 0.15)'
 };
 
-const title = {
+const titleStyle = {
   fontSize: 35,
   margin: 30,
   color: '#A8E0FF'
@@ -43,31 +44,38 @@ class QuestionList extends PureComponent {
 
   render() {
     return (
-      <Query query={FEED_QUERY}>
-        {({ loading, error, data }) => {
-          if (loading) return <div>Loading</div>;
-          if (error) return <div>Error</div>;
-
-          return (
-            <div>
-              <p style={title}>Questions</p>
-              <div style={feedWrapper}>
-                {data.feed.questions.map(question => (
-                  <QuestionItem
-                    style={questionStyle}
-                    key={question.id}
-                    votes={question.votes.length}
-                    answers={0}
-                    title={question.title}
-                    username={question.askedBy.username}
-                    date={question.createdAt}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        }}
-      </Query>
+      <div>
+        <p style={titleStyle}>Questions</p>
+        <FilterConsumer>
+          {({ filter }) => (
+            <Query query={FEED_QUERY}>
+              {({ loading, error, data }) => {
+                if (loading) return <div>Loading</div>;
+                if (error) return <div>Error</div>;
+                return (
+                  <div>
+                    <div style={feedWrapper}>
+                      {data.feed.questions
+                        .filter(({ title }) => title.toLowerCase().includes(filter.toLowerCase()))
+                        .map(({ id, votes, title, askedBy, createdAt }) => (
+                          <QuestionItem
+                            style={questionStyle}
+                            key={id}
+                            votes={votes.length}
+                            answers={0}
+                            title={title}
+                            username={askedBy.username}
+                            date={createdAt}
+                          />
+                        ))}
+                    </div>
+                  </div>
+                );
+              }}
+            </Query>
+          )}
+        </FilterConsumer>
+      </div>
     );
   }
 }
