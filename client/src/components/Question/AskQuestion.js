@@ -79,6 +79,8 @@ class AskQuestion extends PureComponent {
             placeholder="What is your question?"
           />
           <textarea
+            style={input}
+            rows={10}
             value={description}
             name={description}
             onChange={({ target }) => this.setState({ description: target.value })}
