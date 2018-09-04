@@ -1,9 +1,12 @@
 import React, { PureComponent } from 'react';
 import { Mutation } from 'react-apollo';
 import gql from 'graphql-tag';
+import PropTypes from 'prop-types';
+
+import { FEED_QUERY } from './List';
 
 const ASK_QUESTION_MUTATION = gql`
-  mutation LoginMutation($title: String!, $description: String!) {
+  mutation AskQuestionMutation($title: String!, $description: String!) {
     askQuestion(title: $title, description: $description) {
       id
       title
@@ -65,7 +68,7 @@ class AskQuestion extends PureComponent {
 
   render() {
     const { title, description } = this.state;
-
+    const { history } = this.props;
     return (
       <div style={wrapper}>
         <div style={formCard}>
@@ -87,7 +90,19 @@ class AskQuestion extends PureComponent {
             type="text"
             placeholder="Explain your question more in detail."
           />
-          <Mutation mutation={ASK_QUESTION_MUTATION} variables={{ title, description }}>
+          <Mutation
+            mutation={ASK_QUESTION_MUTATION}
+            variables={{ title, description }}
+            onCompleted={() => history.push('/')}
+            update={(store, { data: { askQuestion } }) => {
+              const data = store.readQuery({ query: FEED_QUERY });
+              data.feed.questions.unshift(askQuestion);
+              store.writeQuery({
+                query: FEED_QUERY,
+                data
+              });
+            }}
+          >
             {mutation => (
               <button onClick={mutation} type="button" style={button}>
                 Ask question
@@ -99,5 +114,9 @@ class AskQuestion extends PureComponent {
     );
   }
 }
+
+AskQuestion.propTypes = {
+  history: PropTypes.shape({}).isRequired
+};
 
 export default AskQuestion;

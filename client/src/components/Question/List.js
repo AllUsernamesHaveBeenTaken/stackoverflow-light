@@ -5,7 +5,7 @@ import gql from 'graphql-tag';
 import QuestionItem from './Item';
 import { FilterConsumer } from '../../Contexts/FilterContext';
 
-const FEED_QUERY = gql`
+export const FEED_QUERY = gql`
   {
     feed {
       count
