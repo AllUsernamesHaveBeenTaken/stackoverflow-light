@@ -57,8 +57,29 @@ const titleStyle = {
   color: '#A8E0FF'
 };
 
+const headerWrapper = {
+  display: 'flex',
+  alignItems: 'center'
+};
+
+const filterWrapper = {
+  display: 'flex',
+  marginRight: 80
+};
+
+const filterItem = {
+  marginRight: 20,
+  padding: '5px 10px',
+  backgroundColor: '#2E3532',
+  color: '#fff',
+  borderRadius: 15,
+  cursor: 'pointer'
+};
+
 class QuestionList extends PureComponent {
-  state = {};
+  state = {
+    filter: 'new'
+  };
 
   subscribeToNewQuestions = subscribeToMore => {
     subscribeToMore({
@@ -87,10 +108,51 @@ class QuestionList extends PureComponent {
     });
   };
 
+  sort = (a, b) => {
+    switch (this.state.filter) {
+      case 'new':
+        return this.sortByDate(a, b);
+        break;
+      case 'hot':
+        return this.sortByTotalVotesAndAnswers(a, b);
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  sortByDate = (a, b) => {
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  };
+
+  // @TODO add total answers
+  sortByTotalVotesAndAnswers = (a, b) => {
+    return b.votes.length - a.votes.length;
+  };
+
   render() {
+    const { filter } = this.state;
+
     return (
       <div>
-        <p style={titleStyle}>Questions</p>
+        <div style={headerWrapper}>
+          <p style={titleStyle}>Questions</p>
+          <div style={filterWrapper}>
+            <p
+              style={filter === 'new' ? { ...filterItem, backgroundColor: '#6BF178' } : filterItem}
+              onClick={() => this.setState({ filter: 'new' })}
+            >
+              New
+            </p>
+            <p
+              style={filter === 'hot' ? { ...filterItem, backgroundColor: '#6BF178' } : filterItem}
+              onClick={() => this.setState({ filter: 'hot' })}
+            >
+              Hot
+            </p>
+          </div>
+        </div>
         <FilterConsumer>
           {({ filter }) => (
             <Query query={FEED_QUERY}>
@@ -105,6 +167,7 @@ class QuestionList extends PureComponent {
                     <div style={feedWrapper}>
                       {data.feed.questions
                         .filter(({ title }) => title.toLowerCase().includes(filter.toLowerCase()))
+                        .sort((a, b) => this.sort(a, b))
                         .map(({ id, votes, title, askedBy, createdAt }) => (
                           <QuestionItem
                             style={questionStyle}
