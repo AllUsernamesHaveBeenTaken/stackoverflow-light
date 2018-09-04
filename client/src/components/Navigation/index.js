@@ -2,6 +2,7 @@ import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { withRouter } from 'react-router';
 
+import SearchBar from '../SearchBar';
 import { AUTH_TOKEN } from '../../utils/constants';
 
 const wrapper = {
@@ -50,6 +51,7 @@ class Navigation extends PureComponent {
           <p>StackOverflow</p>
           <p style={logoLightText}>Light</p>
         </Link>
+        <SearchBar />
         <div>
           {authToken ? (
             <Link to="/" style={navItem} onClick={() => sessionStorage.removeItem(AUTH_TOKEN)}>
