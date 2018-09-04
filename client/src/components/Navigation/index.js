@@ -42,7 +42,7 @@ class Navigation extends PureComponent {
   state = {};
 
   render() {
-    const authToken = localStorage.getItem(AUTH_TOKEN);
+    const authToken = sessionStorage.getItem(AUTH_TOKEN);
 
     return (
       <div style={wrapper}>
@@ -52,8 +52,8 @@ class Navigation extends PureComponent {
         </Link>
         <div>
           {authToken ? (
-            <Link to="/" style={navItem} onClick={() => localStorage.removeItem(AUTH_TOKEN)}>
-              log out
+            <Link to="/" style={navItem} onClick={() => sessionStorage.removeItem(AUTH_TOKEN)}>
+              Log out
             </Link>
           ) : (
             <div>

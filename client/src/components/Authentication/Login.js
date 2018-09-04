@@ -74,7 +74,7 @@ class Login extends PureComponent {
 
   // @TODO Save as cookie!!
   saveUserData = token => {
-    localStorage.setItem(AUTH_TOKEN, token);
+    sessionStorage.setItem(AUTH_TOKEN, token);
   };
 
   render() {
