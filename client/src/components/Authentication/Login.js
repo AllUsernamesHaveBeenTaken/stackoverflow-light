@@ -111,7 +111,7 @@ class Login extends PureComponent {
             )}
           </Mutation>
           <Link to="signup" style={smallText}>
-            Already have an account?
+            Don&#39;t have an account? Sign up for free!
           </Link>
         </div>
       </div>
