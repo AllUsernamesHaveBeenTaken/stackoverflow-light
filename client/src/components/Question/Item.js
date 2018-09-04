@@ -57,20 +57,15 @@ const QuestionItem = ({ votes, answers, username, date, title, style }) => (
 );
 
 QuestionItem.propTypes = {
-  votes: PropTypes.number,
-  answers: PropTypes.number,
-  username: PropTypes.string,
-  date: PropTypes.string,
-  title: PropTypes.string,
-  style: PropTypes.objectOf
+  votes: PropTypes.number.isRequired,
+  answers: PropTypes.number.isRequired,
+  username: PropTypes.string.isRequired,
+  date: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  style: PropTypes.shape({})
 };
 
 QuestionItem.defaultProps = {
-  votes: 0,
-  answers: 0,
-  username: 'No Username found',
-  date: 'No date found',
-  title: 'No title found',
   style: {}
 };
 
