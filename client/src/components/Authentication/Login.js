@@ -31,7 +31,7 @@ const loginCard = {
 
 const title = {
   fontSize: 35,
-  margin: 20,
+  marginBottom: 20,
   color: '#2E3532',
   alignSelf: 'flex-start',
   display: 'flex'
