@@ -32,7 +32,7 @@ const navItem = {
   marginLeft: 20
 };
 
-const loginButton = {
+const gradientButton = {
   background: 'linear-gradient(to right, rgba(168,224,255,1) 0%,rgba(107,241,120,1) 100%)',
   borderRadius: 20,
   padding: '5px 10px',
@@ -54,12 +54,21 @@ class Navigation extends PureComponent {
         <SearchBar />
         <div>
           {authToken ? (
-            <Link to="/" style={navItem} onClick={() => sessionStorage.removeItem(AUTH_TOKEN)}>
-              Log out
-            </Link>
+            <div>
+              <Link
+                style={{ ...navItem, ...gradientButton }}
+                to="/askquestion"
+                className="ml1 no-underline black"
+              >
+                Ask a Question
+              </Link>
+              <Link to="/" style={navItem} onClick={() => sessionStorage.removeItem(AUTH_TOKEN)}>
+                Log out
+              </Link>
+            </div>
           ) : (
             <div>
-              <Link to="/login" style={{ ...navItem, ...loginButton }}>
+              <Link to="/login" style={{ ...navItem, ...gradientButton }}>
                 Log in
               </Link>
               <Link to="/signup" style={navItem}>
