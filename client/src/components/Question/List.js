@@ -14,6 +14,7 @@ export const FEED_QUERY = gql`
         title
         votes {
           id
+          isUpVote
         }
         askedBy {
           username
@@ -43,6 +44,7 @@ const NEW_QUESTIONS_SUBSCRIPTION = gql`
         title
         votes {
           id
+          isUpVote
         }
         askedBy {
           username
@@ -196,7 +198,7 @@ class QuestionList extends PureComponent {
                           <QuestionItem
                             style={questionStyle}
                             key={id}
-                            votes={votes.length}
+                            votes={votes}
                             answers={answers.length}
                             title={title}
                             username={askedBy.username}
