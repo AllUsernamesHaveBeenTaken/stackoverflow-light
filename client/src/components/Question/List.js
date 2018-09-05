@@ -19,6 +19,17 @@ export const FEED_QUERY = gql`
           username
         }
         createdAt
+        answers {
+          id
+          content
+          votes {
+            id
+          }
+          createdAt
+          answeredBy {
+            username
+          }
+        }
       }
     }
   }
@@ -168,12 +179,12 @@ class QuestionList extends PureComponent {
                       {data.feed.questions
                         .filter(({ title }) => title.toLowerCase().includes(filter.toLowerCase()))
                         .sort((a, b) => this.sort(a, b))
-                        .map(({ id, votes, title, askedBy, createdAt }) => (
+                        .map(({ id, votes, title, askedBy, createdAt, answers }) => (
                           <QuestionItem
                             style={questionStyle}
                             key={id}
                             votes={votes.length}
-                            answers={0}
+                            answers={answers.length}
                             title={title}
                             username={askedBy.username}
                             date={createdAt}
