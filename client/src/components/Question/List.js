@@ -14,11 +14,24 @@ export const FEED_QUERY = gql`
         title
         votes {
           id
+          isUpVote
         }
         askedBy {
           username
         }
         createdAt
+        answers {
+          id
+          content
+          votes {
+            id
+            isUpVote
+          }
+          createdAt
+          answeredBy {
+            username
+          }
+        }
       }
     }
   }
@@ -32,11 +45,60 @@ const NEW_QUESTIONS_SUBSCRIPTION = gql`
         title
         votes {
           id
+          isUpVote
         }
         askedBy {
           username
         }
         createdAt
+        answers {
+          id
+          content
+          votes {
+            id
+          }
+          createdAt
+          answeredBy {
+            username
+          }
+        }
+      }
+    }
+  }
+`;
+
+const NEW_QUESTION_VOTE_SUBSCRIPTION = gql`
+  subscription {
+    newQuestionVote {
+      node {
+        id
+        isUpVote
+        question {
+          id
+          title
+          votes {
+            id
+            isUpVote
+          }
+          askedBy {
+            username
+          }
+          createdAt
+          answers {
+            id
+            content
+            votes {
+              id
+            }
+            createdAt
+            answeredBy {
+              username
+            }
+          }
+        }
+        user {
+          id
+        }
       }
     }
   }
@@ -108,6 +170,12 @@ class QuestionList extends PureComponent {
     });
   };
 
+  subscribeToNewQuestionVotes = subscribeToMore => {
+    subscribeToMore({
+      document: NEW_QUESTION_VOTE_SUBSCRIPTION
+    });
+  };
+
   sort = (a, b) => {
     switch (this.state.filter) {
       case 'new':
@@ -126,9 +194,18 @@ class QuestionList extends PureComponent {
     return new Date(b.createdAt) - new Date(a.createdAt);
   };
 
-  // @TODO add total answers
+  totalVotes = votes => {
+    const totalTrue = votes.filter(vote => vote.isUpVote && vote).length;
+    const totalFalse = votes.filter(vote => !vote.isUpVote && vote).length;
+
+    return totalTrue - totalFalse;
+  };
+
   sortByTotalVotesAndAnswers = (a, b) => {
-    return b.votes.length - a.votes.length;
+    let totalB = this.totalVotes(b.votes) + b.answers.length;
+    let totalA = this.totalVotes(a.votes) + a.answers.length;
+
+    return totalB - totalA;
   };
 
   render() {
@@ -161,6 +238,7 @@ class QuestionList extends PureComponent {
                 if (error) return <div>Error</div>;
 
                 this.subscribeToNewQuestions(subscribeToMore);
+                this.subscribeToNewQuestionVotes(subscribeToMore);
 
                 return (
                   <div>
@@ -168,12 +246,12 @@ class QuestionList extends PureComponent {
                       {data.feed.questions
                         .filter(({ title }) => title.toLowerCase().includes(filter.toLowerCase()))
                         .sort((a, b) => this.sort(a, b))
-                        .map(({ id, votes, title, askedBy, createdAt }) => (
+                        .map(({ id, votes, title, askedBy, createdAt, answers }) => (
                           <QuestionItem
                             style={questionStyle}
                             key={id}
-                            votes={votes.length}
-                            answers={0}
+                            votes={votes}
+                            answers={answers.length}
                             title={title}
                             username={askedBy.username}
                             date={createdAt}

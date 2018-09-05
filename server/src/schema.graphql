@@ -1,4 +1,4 @@
-# import Question, QuestionSubscriptionPayload, User, QuestionVote, QuestionVoteSubscriptionPayload from './generated/prisma.graphql'
+# import Question, QuestionSubscriptionPayload, User, QuestionVote, QuestionVoteSubscriptionPayload, Answer, AnswerSubscriptionPayload, AnswerVote, AnswerVoteSubscriptionPayload from './generated/prisma.graphql'
 
 type Query {
   feed(filter: String): Feed!
@@ -9,11 +9,15 @@ type Mutation {
   login(email: String!, password: String!): AuthPayload
   askQuestion(title: String!, description: String!): Question!
   voteOnQuestion(questionId: ID!, isUpVote: Boolean!): QuestionVote
+  answerOnQuestion(questionId: ID!, content: String!): Answer!
+  voteOnAnswer(answerId: ID!, isUpVote: Boolean!): AnswerVote
 }
 
 type Subscription {
   newQuestion: QuestionSubscriptionPayload
   newQuestionVote: QuestionVoteSubscriptionPayload
+  newAnswer: AnswerSubscriptionPayload
+  newAnswerVote: AnswerVoteSubscriptionPayload
 }
 
 type Feed {

@@ -38,10 +38,17 @@ const dateStyle = {
   fontSize: 12
 };
 
+const totalVotes = votes => {
+  const totalTrue = votes.filter(vote => vote.isUpVote && vote).length;
+  const totalFalse = votes.filter(vote => !vote.isUpVote && vote).length;
+
+  return totalTrue - totalFalse;
+};
+
 const QuestionItem = ({ votes, answers, username, date, title, style }) => (
   <div style={{ ...wrapper, ...style }}>
     <div style={header}>
-      <p style={{ ...headerTag, ...headerText }}>{`${votes} votes`}</p>
+      <p style={{ ...headerTag, ...headerText }}>{`${totalVotes(votes)} votes`}</p>
       <p style={{ ...headerTag, ...headerText }}>{`${answers} answers`}</p>
       <p style={{ ...headerText, padding: '0px 10px' }}>{`asked by ${username}`}</p>
     </div>
@@ -57,7 +64,7 @@ const QuestionItem = ({ votes, answers, username, date, title, style }) => (
 );
 
 QuestionItem.propTypes = {
-  votes: PropTypes.number.isRequired,
+  votes: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   answers: PropTypes.number.isRequired,
   username: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,

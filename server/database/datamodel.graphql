@@ -4,7 +4,8 @@ type Question {
   description: String
   createdAt: DateTime!
   askedBy: User
-  votes: [QuestionVote!]! 
+  votes: [QuestionVote!]!
+  answers: [Answer!]!
 }
 
 type User {
@@ -15,11 +16,28 @@ type User {
   createdAt: DateTime!
   questions: [Question!]!
   questionVotes: [QuestionVote!]!
+  answers: [Answer!]!  
 }
 
 type QuestionVote {
   id: ID! @unique
   isUpVote: Boolean!
   question: Question!
+  user: User!
+}
+
+type Answer {
+  id: ID! @unique
+  content: String!
+  answeredBy: User
+  question: Question!  
+  votes: [AnswerVote!]!
+  createdAt: DateTime!  
+}
+
+type AnswerVote {
+  id: ID! @unique
+  isUpVote: Boolean!
+  answer: Answer!
   user: User!
 }
