@@ -205,6 +205,21 @@ class QuestionDetail extends PureComponent {
                       mutation={ANSWER_ON_QUESTION_MUTATION}
                       variables={{ questionId: id, content: answerText }}
                       onCompleted={() => this.postAnswerComplete()}
+                      update={(store, { data: { answerOnQuestion } }) => {
+                        const queryData = store.readQuery({
+                          query: QUESTION_QUERY,
+                          variables: { id }
+                        });
+                        queryData.question.answers.unshift(answerOnQuestion);
+                        console.log(queryData);
+                        console.log(id);
+
+                        store.writeQuery({
+                          query: QUESTION_QUERY,
+                          variables: { id },
+                          queryData
+                        });
+                      }}
                     >
                       {mutation => (
                         <button onClick={mutation} type="button" style={button}>
