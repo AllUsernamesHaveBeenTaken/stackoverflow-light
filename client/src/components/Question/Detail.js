@@ -90,6 +90,45 @@ const VOTE_ON_ANSWER_MUTATION = gql`
   }
 `;
 
+const NEW_QUESTION_VOTE_SUBSCRIPTION = gql`
+  subscription {
+    newQuestionVote {
+      node {
+        id
+        isUpVote
+        question {
+          id
+          title
+          votes {
+            id
+            isUpVote
+          }
+          askedBy {
+            id
+            username
+          }
+          createdAt
+          answers {
+            id
+            content
+            votes {
+              id
+            }
+            createdAt
+            answeredBy {
+              id
+              username
+            }
+          }
+        }
+        user {
+          id
+        }
+      }
+    }
+  }
+`;
+
 const wrapper = {
   display: 'flex',
   justifyContent: 'center',
@@ -202,6 +241,12 @@ class QuestionDetail extends PureComponent {
     });
   };
 
+  subscribeToNewQuestionVotes = subscribeToMore => {
+    subscribeToMore({
+      document: NEW_QUESTION_VOTE_SUBSCRIPTION
+    });
+  };
+
   render() {
     const { match } = this.props;
     const { answerText } = this.state;
@@ -214,6 +259,7 @@ class QuestionDetail extends PureComponent {
           const { askedBy, createdAt, title, description, answers, id, votes } = data.question;
 
           this.subscribeToNewAnswers(subscribeToMore);
+          this.subscribeToNewQuestionVotes(subscribeToMore);
 
           return (
             <div style={wrapper}>
