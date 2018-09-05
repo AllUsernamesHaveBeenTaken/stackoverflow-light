@@ -54,6 +54,26 @@ const ANSWER_ON_QUESTION_MUTATION = gql`
   }
 `;
 
+const NEW_ANSWERS_SUBSCRIPTION = gql`
+  subscription {
+    newAnswer {
+      node {
+        id
+        createdAt
+        content
+        votes {
+          id
+          isUpVote
+        }
+        answeredBy {
+          id
+          username
+        }
+      }
+    }
+  }
+`;
+
 const wrapper = {
   display: 'flex',
   justifyContent: 'center',
@@ -142,16 +162,35 @@ class QuestionDetail extends PureComponent {
     this.setState({ answerText: '' });
   };
 
+  subscribeToNewAnswers = subscribeToMore => {
+    subscribeToMore({
+      document: NEW_ANSWERS_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newAnswer = subscriptionData.data.newAnswer.node;
+        console.log([newAnswer, ...prev.question.answers]);
+        const glueAnswers = [newAnswer, ...prev.question.answers];
+        return Object.assign({}, prev, {
+          question: {
+            answers: glueAnswers
+          }
+        });
+      }
+    });
+  };
+
   render() {
     const { match } = this.props;
     const { answerText } = this.state;
     return (
       <Query query={QUESTION_QUERY} variables={{ id: match.params.id }}>
-        {({ loading, error, data }) => {
+        {({ loading, error, data, subscribeToMore }) => {
           if (loading) return <div>Loading</div>;
           if (error) return <div>Error</div>;
 
           const { askedBy, createdAt, title, description, answers, id } = data.question;
+
+          this.subscribeToNewAnswers(subscribeToMore);
 
           return (
             <div style={wrapper}>
