@@ -129,6 +129,30 @@ const NEW_QUESTION_VOTE_SUBSCRIPTION = gql`
   }
 `;
 
+const NEW_ANSWER_VOTE_SUBSCRIPTION = gql`
+  subscription {
+    newAnswerVote {
+      node {
+        id
+        isUpVote
+        answer {
+          id
+          createdAt
+          content
+          votes {
+            id
+            isUpVote
+          }
+          answeredBy {
+            id
+            username
+          }
+        }
+      }
+    }
+  }
+`;
+
 const wrapper = {
   display: 'flex',
   justifyContent: 'center',
@@ -247,6 +271,12 @@ class QuestionDetail extends PureComponent {
     });
   };
 
+  subscribeToNewAnswerVotes = subscribeToMore => {
+    subscribeToMore({
+      document: NEW_ANSWER_VOTE_SUBSCRIPTION
+    });
+  };
+
   render() {
     const { match } = this.props;
     const { answerText } = this.state;
@@ -260,6 +290,7 @@ class QuestionDetail extends PureComponent {
 
           this.subscribeToNewAnswers(subscribeToMore);
           this.subscribeToNewQuestionVotes(subscribeToMore);
+          this.subscribeToNewAnswerVotes(subscribeToMore);
 
           return (
             <div style={wrapper}>
