@@ -67,6 +67,43 @@ const NEW_QUESTIONS_SUBSCRIPTION = gql`
   }
 `;
 
+const NEW_QUESTION_VOTE_SUBSCRIPTION = gql`
+  subscription {
+    newQuestionVote {
+      node {
+        id
+        isUpVote
+        question {
+          id
+          title
+          votes {
+            id
+            isUpVote
+          }
+          askedBy {
+            username
+          }
+          createdAt
+          answers {
+            id
+            content
+            votes {
+              id
+            }
+            createdAt
+            answeredBy {
+              username
+            }
+          }
+        }
+        user {
+          id
+        }
+      }
+    }
+  }
+`;
+
 const feedWrapper = {
   marginLeft: 100
 };
@@ -133,6 +170,12 @@ class QuestionList extends PureComponent {
     });
   };
 
+  subscribeToNewQuestionVotes = subscribeToMore => {
+    subscribeToMore({
+      document: NEW_QUESTION_VOTE_SUBSCRIPTION
+    });
+  };
+
   sort = (a, b) => {
     switch (this.state.filter) {
       case 'new':
@@ -195,6 +238,7 @@ class QuestionList extends PureComponent {
                 if (error) return <div>Error</div>;
 
                 this.subscribeToNewQuestions(subscribeToMore);
+                this.subscribeToNewQuestionVotes(subscribeToMore);
 
                 return (
                   <div>
