@@ -123,6 +123,60 @@ async function voteOnQuestion(parent, args, context, info) {
   )
 }
 
+async function voteOnAnswer(parent, args, context, info) {
+  const userId = authorize(context)
+  
+  const voteExists = await context.db.exists.AnswerVote({
+    user: { id: userId },
+    answer: { id: args.answerId }
+  })
+
+  if (voteExists) {
+    const vote = await context.db.query.answerVotes(
+      {
+        where: {
+          AND: [
+            { user: { id: userId } } ,
+            { answer: { id: args.answerId } }
+          ]
+        }
+      },
+      `{
+        id 
+        isUpVote
+      }`
+    )
+
+    if (args.isUpVote !== vote[0].isUpVote) {
+      return context.db.mutation.updateAnswerVote(
+        {
+          data: { isUpVote: args.isUpVote },
+          where: { id: vote[0].id }          
+        },
+        info
+      )
+    }
+
+    return context.db.mutation.deleteAnswerVote(
+      {
+        where: { id: vote[0].id }
+      },
+      info
+    )
+  }
+
+  return context.db.mutation.createAnswerVote(
+    {
+      data: {
+        user: { connect: { id: userId } },
+        answer: { connect: { id: args.answerId } },
+        isUpVote: args.isUpVote
+      }
+    },
+    info
+  )
+}
+
 
 
 module.exports = {
@@ -130,6 +184,7 @@ module.exports = {
   login,
   askQuestion,
   voteOnQuestion,
-  answerOnQuestion
+  answerOnQuestion,
+  voteOnAnswer
 }
 
