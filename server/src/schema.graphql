@@ -2,6 +2,7 @@
 
 type Query {
   feed(filter: String): Feed!
+  question(id: ID!): Question!
 }
 
 type Mutation {
