@@ -48,6 +48,17 @@ const NEW_QUESTIONS_SUBSCRIPTION = gql`
           username
         }
         createdAt
+        answers {
+          id
+          content
+          votes {
+            id
+          }
+          createdAt
+          answeredBy {
+            username
+          }
+        }
       }
     }
   }
@@ -138,8 +149,8 @@ class QuestionList extends PureComponent {
   };
 
   sortByTotalVotesAndAnswers = (a, b) => {
-    let totalB = b.votes.length + b.answers.length + b.answers.votes.length;
-    let totalA = a.votes.length + a.answers.length + b.answers.votes.length;
+    let totalB = b.votes.length + b.answers.length;
+    let totalA = a.votes.length + a.answers.length;
 
     return totalB - totalA;
   };
