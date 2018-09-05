@@ -150,9 +150,16 @@ class QuestionList extends PureComponent {
     return new Date(b.createdAt) - new Date(a.createdAt);
   };
 
+  totalVotes = votes => {
+    const totalTrue = votes.filter(vote => vote.isUpVote && vote).length;
+    const totalFalse = votes.filter(vote => !vote.isUpVote && vote).length;
+  
+    return totalTrue - totalFalse;
+  };
+
   sortByTotalVotesAndAnswers = (a, b) => {
-    let totalB = b.votes.length + b.answers.length;
-    let totalA = a.votes.length + a.answers.length;
+    let totalB = this.totalVotes(b.votes) + b.answers.length;
+    let totalA = this.totalVotes(a.votes) + a.answers.length;
 
     return totalB - totalA;
   };
