@@ -23,7 +23,7 @@ class App extends Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={Signup} />
             <Route exact path="/askquestion" component={AskQuestion} />
-            <Route exact path="/question/:id" component={QuestionDetail} />
+            <Route path="/question/:id" component={QuestionDetail} />
           </Switch>  
         </FilterProvider>
       </div>

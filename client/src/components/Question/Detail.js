@@ -1,4 +1,58 @@
 import React, { PureComponent } from 'react';
+import { Query, Mutation } from 'react-apollo';
+import gql from 'graphql-tag';
+import TimeAgo from 'react-timeago';
+import PropTypes from 'prop-types';
+
+const QUESTION_QUERY = gql`
+  query QuestionQuery($id: ID!) {
+    question(id: $id) {
+      id
+      title
+      createdAt
+      description
+      votes {
+        id
+        isUpVote
+      }
+      askedBy {
+        id
+        username
+      }
+      answers {
+        id
+        createdAt
+        content
+        votes {
+          id
+          isUpVote
+        }
+        answeredBy {
+          id
+          username
+        }
+      }
+    }
+  }
+`;
+
+const ANSWER_ON_QUESTION_MUTATION = gql`
+  mutation AnswerOnQuestionMutation($questionId: ID!, $content: String!) {
+    answerOnQuestion(questionId: $questionId, content: $content) {
+      id
+      createdAt
+      content
+      votes {
+        id
+        isUpVote
+      }
+      answeredBy {
+        id
+        username
+      }
+    }
+  }
+`;
 
 const wrapper = {
   display: 'flex',
@@ -33,7 +87,7 @@ const voteItem = {
   paddingRight: 10
 };
 
-const answer = {
+const answerStyle = {
   borderBottom: 'solid 1px #A8E0FF',
   marginTop: 30,
   padding: '0px 50px'
@@ -82,87 +136,95 @@ const button = {
 };
 
 class QuestionDetail extends PureComponent {
-  state = {};
+  state = { answerText: '' };
+
+  postAnswerComplete = () => {
+    this.setState({ answerText: '' });
+  };
 
   render() {
+    const { match } = this.props;
+    const { answerText } = this.state;
     return (
-      <div style={wrapper}>
-        <div style={innerWrapper}>
-          <div style={questionWrapper}>
-            <div style={smallRightInfo}>
-              <p>asked by seppesnoeck</p>
-              <p>0 seconds ago</p>
-            </div>
-            <p style={titleStyle}>Ik ben een dikke vette title</p>
-            <p style={descriptionStyle}>
-              Ik ben zijn dikke vette beschrijving. Ik ben zijn dikke vette beschrijving. Ik ben
-              zijn dikke vette beschrijving. Ik ben zijn dikke vette beschrijving. Ik ben zijn dikke
-              vette beschrijving. Ik ben zijn dikke vette beschrijving. Ik ben zijn dikke vette
-              beschrijving. Ik ben zijn dikke vette beschrijving.
-            </p>
-            <div style={voteWrapper}>
-              <p style={{ ...voteItem, cursor: 'pointer' }}>upvote</p>
-              <p style={voteItem}>0</p>
-              <p style={{ ...voteItem, cursor: 'pointer' }}>downvote</p>
-            </div>
-          </div>
-          <div>
-            <div style={answer}>
-              <p>
-                Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord.
-                Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord.
-                Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord.
-                Ik ben een antwoord.
-              </p>
-              <div style={answerFooter}>
-                <div style={{ display: 'flex' }}>
-                  <p style={{ ...voteItem, cursor: 'pointer' }}>upvote</p>
-                  <p style={voteItem}>0</p>
-                  <p style={{ ...voteItem, cursor: 'pointer' }}>downvote</p>
+      <Query query={QUESTION_QUERY} variables={{ id: match.params.id }}>
+        {({ loading, error, data }) => {
+          if (loading) return <div>Loading</div>;
+          if (error) return <div>Error</div>;
+
+          const { askedBy, createdAt, title, description, answers, id } = data.question;
+
+          return (
+            <div style={wrapper}>
+              <div style={innerWrapper}>
+                <div style={questionWrapper}>
+                  <div style={smallRightInfo}>
+                    <p>{`asked by ${askedBy.username}`}</p>
+                    <TimeAgo date={createdAt} />
+                  </div>
+                  <p style={titleStyle}>{title}</p>
+                  <p style={descriptionStyle}>{description}</p>
+                  <div style={voteWrapper}>
+                    <p style={{ ...voteItem, cursor: 'pointer' }}>upvote</p>
+                    <p style={voteItem}>0</p>
+                    <p style={{ ...voteItem, cursor: 'pointer' }}>downvote</p>
+                  </div>
                 </div>
-                <div style={smallRightInfo}>
-                  <p>answered by seppesnoeck</p>
-                  <p>0 seconds ago</p>
+                <div>
+                  {answers.map(answer => (
+                    <div key={answer.id} style={answerStyle}>
+                      <p>{answer.content}</p>
+                      <div style={answerFooter}>
+                        <div style={{ display: 'flex' }}>
+                          <p style={{ ...voteItem, cursor: 'pointer' }}>upvote</p>
+                          <p style={voteItem}>0</p>
+                          <p style={{ ...voteItem, cursor: 'pointer' }}>downvote</p>
+                        </div>
+                        <div style={smallRightInfo}>
+                          <p>{`answered by ${answer.answeredBy.username}`}</p>
+                          <TimeAgo date={answer.createdAt} />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div style={inputWrapper}>
+                    {answers.length <= 0 ? (
+                      <p style={inputTitle}>Be the first to answer</p>
+                    ) : (
+                      <p style={inputTitle}>Propose an answer</p>
+                    )}
+                    <textarea
+                      style={input}
+                      rows={10}
+                      name="answer"
+                      value={answerText}
+                      type="text"
+                      placeholder="Propose a correct answer to the question."
+                      onChange={({ target }) => this.setState({ answerText: target.value })}
+                    />
+                    <Mutation
+                      mutation={ANSWER_ON_QUESTION_MUTATION}
+                      variables={{ questionId: id, content: answerText }}
+                      onCompleted={() => this.postAnswerComplete()}
+                    >
+                      {mutation => (
+                        <button onClick={mutation} type="button" style={button}>
+                          Answer
+                        </button>
+                      )}
+                    </Mutation>
+                  </div>
                 </div>
               </div>
             </div>
-            <div style={answer}>
-              <p>
-                Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord.
-                Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord.
-                Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord. Ik ben een antwoord.
-                Ik ben een antwoord.
-              </p>
-              <div style={answerFooter}>
-                <div style={{ display: 'flex' }}>
-                  <p style={{ ...voteItem, cursor: 'pointer' }}>upvote</p>
-                  <p style={voteItem}>0</p>
-                  <p style={{ ...voteItem, cursor: 'pointer' }}>downvote</p>
-                </div>
-                <div style={smallRightInfo}>
-                  <p>answered by seppesnoeck</p>
-                  <p>0 seconds ago</p>
-                </div>
-              </div>
-            </div>
-            <div style={inputWrapper}>
-              <p style={inputTitle}>Propose an answer</p>
-              <textarea
-                style={input}
-                rows={10}
-                name="answer"
-                type="text"
-                placeholder="Propose a correct answer to the question."
-              />
-              <button type="button" style={button}>
-                Answer
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+          );
+        }}
+      </Query>
     );
   }
 }
+
+QuestionDetail.propTypes = {
+  match: PropTypes.shape({}).isRequired
+};
 
 export default QuestionDetail;

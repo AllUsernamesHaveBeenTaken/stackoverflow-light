@@ -1,6 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
+import { withRouter } from 'react-router';
+import PropTypes from 'prop-types';
 
 import QuestionItem from './Item';
 import { FilterConsumer } from '../../Contexts/FilterContext';
@@ -210,6 +212,7 @@ class QuestionList extends PureComponent {
 
   render() {
     const { filter } = this.state;
+    const { history } = this.props;
 
     return (
       <div>
@@ -241,23 +244,23 @@ class QuestionList extends PureComponent {
                 this.subscribeToNewQuestionVotes(subscribeToMore);
 
                 return (
-                  <div>
-                    <div style={feedWrapper}>
-                      {data.feed.questions
-                        .filter(({ title }) => title.toLowerCase().includes(filter.toLowerCase()))
-                        .sort((a, b) => this.sort(a, b))
-                        .map(({ id, votes, title, askedBy, createdAt, answers }) => (
-                          <QuestionItem
-                            style={questionStyle}
-                            key={id}
-                            votes={votes}
-                            answers={answers.length}
-                            title={title}
-                            username={askedBy.username}
-                            date={createdAt}
-                          />
-                        ))}
-                    </div>
+                  <div style={feedWrapper}>
+                    {data.feed.questions
+                      .filter(({ title }) => title.toLowerCase().includes(filter.toLowerCase()))
+                      .sort((a, b) => this.sort(a, b))
+                      .map(({ id, votes, title, askedBy, createdAt, answers }) => (
+                        <QuestionItem
+                          style={questionStyle}
+                          key={id}
+                          votes={votes}
+                          answers={answers.length}
+                          title={title}
+                          username={askedBy.username}
+                          date={createdAt}
+                          history={history}
+                          id={id}
+                        />
+                      ))}
                   </div>
                 );
               }}
@@ -269,4 +272,8 @@ class QuestionList extends PureComponent {
   }
 }
 
-export default QuestionList;
+QuestionList.propTypes = {
+  history: PropTypes.shape({}).isRequired
+};
+
+export default withRouter(QuestionList);

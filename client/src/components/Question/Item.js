@@ -6,7 +6,8 @@ const wrapper = {
   display: 'flex',
   backgroundColor: '#F7F7F2',
   flexDirection: 'column',
-  padding: '10px 20px'
+  padding: '10px 20px',
+  cursor: 'pointer'
 };
 
 const header = {
@@ -45,8 +46,12 @@ const totalVotes = votes => {
   return totalTrue - totalFalse;
 };
 
-const QuestionItem = ({ votes, answers, username, date, title, style }) => (
-  <div style={{ ...wrapper, ...style }}>
+const QuestionItem = ({ votes, answers, username, date, title, style, id, history }) => (
+  <div
+    style={{ ...wrapper, ...style }}
+    onClick={() => history.push(`/question/${id}`)}
+    role="presentation"
+  >
     <div style={header}>
       <p style={{ ...headerTag, ...headerText }}>{`${totalVotes(votes)} votes`}</p>
       <p style={{ ...headerTag, ...headerText }}>{`${answers} answers`}</p>
@@ -69,7 +74,9 @@ QuestionItem.propTypes = {
   username: PropTypes.string.isRequired,
   date: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  style: PropTypes.shape({})
+  style: PropTypes.shape({}),
+  history: PropTypes.shape({}).isRequired,
+  id: PropTypes.string.isRequired
 };
 
 QuestionItem.defaultProps = {
