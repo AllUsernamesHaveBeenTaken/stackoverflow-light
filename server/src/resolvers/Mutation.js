@@ -55,6 +55,20 @@ function askQuestion(parent, args, context, info) {
   )
 }
 
+function answerOnQuestion(parent, args, context, info) {
+  const userId = authorize(context)
+  return context.db.mutation.createAnswer(
+    {
+      data: {
+        content: args.content,
+        answeredBy: { connect: { id: userId }},
+        question: { connect: { id: args.questionId } }
+      }
+    },
+    info
+  )
+}
+
 async function voteOnQuestion(parent, args, context, info) {
   const userId = authorize(context)
   
@@ -109,10 +123,13 @@ async function voteOnQuestion(parent, args, context, info) {
   )
 }
 
+
+
 module.exports = {
   signup,
   login,
   askQuestion,
-  voteOnQuestion
+  voteOnQuestion,
+  answerOnQuestion
 }
 

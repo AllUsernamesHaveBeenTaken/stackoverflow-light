@@ -1,5 +1,13 @@
 # source: https://eu1.prisma.sh/seppesnoeck/stackoverflow-light/dev
-# timestamp: Sat Sep 01 2018 15:22:55 GMT+0200 (CEST)
+# timestamp: Wed Sep 05 2018 10:43:58 GMT+0200 (CEST)
+
+type AggregateAnswer {
+  count: Int!
+}
+
+type AggregateAnswerVote {
+  count: Int!
+}
 
 type AggregateQuestion {
   count: Int!
@@ -11,6 +19,519 @@ type AggregateQuestionVote {
 
 type AggregateUser {
   count: Int!
+}
+
+type Answer implements Node {
+  id: ID!
+  content: String!
+  answeredBy(where: UserWhereInput): User
+  question(where: QuestionWhereInput): Question!
+  votes(where: AnswerVoteWhereInput, orderBy: AnswerVoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AnswerVote!]
+  createdAt: DateTime!
+}
+
+"""A connection to a list of items."""
+type AnswerConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AnswerEdge]!
+  aggregate: AggregateAnswer!
+}
+
+input AnswerCreateInput {
+  content: String!
+  answeredBy: UserCreateOneWithoutAnswersInput
+  question: QuestionCreateOneWithoutAnswersInput!
+  votes: AnswerVoteCreateManyWithoutAnswerInput
+}
+
+input AnswerCreateManyWithoutAnsweredByInput {
+  create: [AnswerCreateWithoutAnsweredByInput!]
+  connect: [AnswerWhereUniqueInput!]
+}
+
+input AnswerCreateManyWithoutQuestionInput {
+  create: [AnswerCreateWithoutQuestionInput!]
+  connect: [AnswerWhereUniqueInput!]
+}
+
+input AnswerCreateOneWithoutVotesInput {
+  create: AnswerCreateWithoutVotesInput
+  connect: AnswerWhereUniqueInput
+}
+
+input AnswerCreateWithoutAnsweredByInput {
+  content: String!
+  question: QuestionCreateOneWithoutAnswersInput!
+  votes: AnswerVoteCreateManyWithoutAnswerInput
+}
+
+input AnswerCreateWithoutQuestionInput {
+  content: String!
+  answeredBy: UserCreateOneWithoutAnswersInput
+  votes: AnswerVoteCreateManyWithoutAnswerInput
+}
+
+input AnswerCreateWithoutVotesInput {
+  content: String!
+  answeredBy: UserCreateOneWithoutAnswersInput
+  question: QuestionCreateOneWithoutAnswersInput!
+}
+
+"""An edge in a connection."""
+type AnswerEdge {
+  """The item at the end of the edge."""
+  node: Answer!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum AnswerOrderByInput {
+  id_ASC
+  id_DESC
+  content_ASC
+  content_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type AnswerPreviousValues {
+  id: ID!
+  content: String!
+  createdAt: DateTime!
+}
+
+type AnswerSubscriptionPayload {
+  mutation: MutationType!
+  node: Answer
+  updatedFields: [String!]
+  previousValues: AnswerPreviousValues
+}
+
+input AnswerSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AnswerSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AnswerSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AnswerSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AnswerWhereInput
+}
+
+input AnswerUpdateInput {
+  content: String
+  answeredBy: UserUpdateOneWithoutAnswersInput
+  question: QuestionUpdateOneWithoutAnswersInput
+  votes: AnswerVoteUpdateManyWithoutAnswerInput
+}
+
+input AnswerUpdateManyWithoutAnsweredByInput {
+  create: [AnswerCreateWithoutAnsweredByInput!]
+  connect: [AnswerWhereUniqueInput!]
+  disconnect: [AnswerWhereUniqueInput!]
+  delete: [AnswerWhereUniqueInput!]
+  update: [AnswerUpdateWithWhereUniqueWithoutAnsweredByInput!]
+  upsert: [AnswerUpsertWithWhereUniqueWithoutAnsweredByInput!]
+}
+
+input AnswerUpdateManyWithoutQuestionInput {
+  create: [AnswerCreateWithoutQuestionInput!]
+  connect: [AnswerWhereUniqueInput!]
+  disconnect: [AnswerWhereUniqueInput!]
+  delete: [AnswerWhereUniqueInput!]
+  update: [AnswerUpdateWithWhereUniqueWithoutQuestionInput!]
+  upsert: [AnswerUpsertWithWhereUniqueWithoutQuestionInput!]
+}
+
+input AnswerUpdateOneWithoutVotesInput {
+  create: AnswerCreateWithoutVotesInput
+  connect: AnswerWhereUniqueInput
+  delete: Boolean
+  update: AnswerUpdateWithoutVotesDataInput
+  upsert: AnswerUpsertWithoutVotesInput
+}
+
+input AnswerUpdateWithoutAnsweredByDataInput {
+  content: String
+  question: QuestionUpdateOneWithoutAnswersInput
+  votes: AnswerVoteUpdateManyWithoutAnswerInput
+}
+
+input AnswerUpdateWithoutQuestionDataInput {
+  content: String
+  answeredBy: UserUpdateOneWithoutAnswersInput
+  votes: AnswerVoteUpdateManyWithoutAnswerInput
+}
+
+input AnswerUpdateWithoutVotesDataInput {
+  content: String
+  answeredBy: UserUpdateOneWithoutAnswersInput
+  question: QuestionUpdateOneWithoutAnswersInput
+}
+
+input AnswerUpdateWithWhereUniqueWithoutAnsweredByInput {
+  where: AnswerWhereUniqueInput!
+  data: AnswerUpdateWithoutAnsweredByDataInput!
+}
+
+input AnswerUpdateWithWhereUniqueWithoutQuestionInput {
+  where: AnswerWhereUniqueInput!
+  data: AnswerUpdateWithoutQuestionDataInput!
+}
+
+input AnswerUpsertWithoutVotesInput {
+  update: AnswerUpdateWithoutVotesDataInput!
+  create: AnswerCreateWithoutVotesInput!
+}
+
+input AnswerUpsertWithWhereUniqueWithoutAnsweredByInput {
+  where: AnswerWhereUniqueInput!
+  update: AnswerUpdateWithoutAnsweredByDataInput!
+  create: AnswerCreateWithoutAnsweredByInput!
+}
+
+input AnswerUpsertWithWhereUniqueWithoutQuestionInput {
+  where: AnswerWhereUniqueInput!
+  update: AnswerUpdateWithoutQuestionDataInput!
+  create: AnswerCreateWithoutQuestionInput!
+}
+
+type AnswerVote implements Node {
+  id: ID!
+  isUpVote: Boolean!
+  answer(where: AnswerWhereInput): Answer!
+  user(where: UserWhereInput): User!
+}
+
+"""A connection to a list of items."""
+type AnswerVoteConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [AnswerVoteEdge]!
+  aggregate: AggregateAnswerVote!
+}
+
+input AnswerVoteCreateInput {
+  isUpVote: Boolean!
+  answer: AnswerCreateOneWithoutVotesInput!
+  user: UserCreateOneInput!
+}
+
+input AnswerVoteCreateManyWithoutAnswerInput {
+  create: [AnswerVoteCreateWithoutAnswerInput!]
+  connect: [AnswerVoteWhereUniqueInput!]
+}
+
+input AnswerVoteCreateWithoutAnswerInput {
+  isUpVote: Boolean!
+  user: UserCreateOneInput!
+}
+
+"""An edge in a connection."""
+type AnswerVoteEdge {
+  """The item at the end of the edge."""
+  node: AnswerVote!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum AnswerVoteOrderByInput {
+  id_ASC
+  id_DESC
+  isUpVote_ASC
+  isUpVote_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type AnswerVotePreviousValues {
+  id: ID!
+  isUpVote: Boolean!
+}
+
+type AnswerVoteSubscriptionPayload {
+  mutation: MutationType!
+  node: AnswerVote
+  updatedFields: [String!]
+  previousValues: AnswerVotePreviousValues
+}
+
+input AnswerVoteSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AnswerVoteSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AnswerVoteSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AnswerVoteSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: AnswerVoteWhereInput
+}
+
+input AnswerVoteUpdateInput {
+  isUpVote: Boolean
+  answer: AnswerUpdateOneWithoutVotesInput
+  user: UserUpdateOneInput
+}
+
+input AnswerVoteUpdateManyWithoutAnswerInput {
+  create: [AnswerVoteCreateWithoutAnswerInput!]
+  connect: [AnswerVoteWhereUniqueInput!]
+  disconnect: [AnswerVoteWhereUniqueInput!]
+  delete: [AnswerVoteWhereUniqueInput!]
+  update: [AnswerVoteUpdateWithWhereUniqueWithoutAnswerInput!]
+  upsert: [AnswerVoteUpsertWithWhereUniqueWithoutAnswerInput!]
+}
+
+input AnswerVoteUpdateWithoutAnswerDataInput {
+  isUpVote: Boolean
+  user: UserUpdateOneInput
+}
+
+input AnswerVoteUpdateWithWhereUniqueWithoutAnswerInput {
+  where: AnswerVoteWhereUniqueInput!
+  data: AnswerVoteUpdateWithoutAnswerDataInput!
+}
+
+input AnswerVoteUpsertWithWhereUniqueWithoutAnswerInput {
+  where: AnswerVoteWhereUniqueInput!
+  update: AnswerVoteUpdateWithoutAnswerDataInput!
+  create: AnswerVoteCreateWithoutAnswerInput!
+}
+
+input AnswerVoteWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AnswerVoteWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AnswerVoteWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AnswerVoteWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  isUpVote: Boolean
+
+  """All values that are not equal to given value."""
+  isUpVote_not: Boolean
+  answer: AnswerWhereInput
+  user: UserWhereInput
+}
+
+input AnswerVoteWhereUniqueInput {
+  id: ID
+}
+
+input AnswerWhereInput {
+  """Logical AND on all given filters."""
+  AND: [AnswerWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [AnswerWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [AnswerWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  content: String
+
+  """All values that are not equal to given value."""
+  content_not: String
+
+  """All values that are contained in given list."""
+  content_in: [String!]
+
+  """All values that are not contained in given list."""
+  content_not_in: [String!]
+
+  """All values less than the given value."""
+  content_lt: String
+
+  """All values less than or equal the given value."""
+  content_lte: String
+
+  """All values greater than the given value."""
+  content_gt: String
+
+  """All values greater than or equal the given value."""
+  content_gte: String
+
+  """All values containing the given string."""
+  content_contains: String
+
+  """All values not containing the given string."""
+  content_not_contains: String
+
+  """All values starting with the given string."""
+  content_starts_with: String
+
+  """All values not starting with the given string."""
+  content_not_starts_with: String
+
+  """All values ending with the given string."""
+  content_ends_with: String
+
+  """All values not ending with the given string."""
+  content_not_ends_with: String
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
+  answeredBy: UserWhereInput
+  question: QuestionWhereInput
+  votes_every: AnswerVoteWhereInput
+  votes_some: AnswerVoteWhereInput
+  votes_none: AnswerVoteWhereInput
+}
+
+input AnswerWhereUniqueInput {
+  id: ID
 }
 
 type BatchPayload {
@@ -28,23 +549,35 @@ scalar Long
 
 type Mutation {
   createQuestion(data: QuestionCreateInput!): Question!
-  createUser(data: UserCreateInput!): User!
   createQuestionVote(data: QuestionVoteCreateInput!): QuestionVote!
+  createAnswer(data: AnswerCreateInput!): Answer!
+  createAnswerVote(data: AnswerVoteCreateInput!): AnswerVote!
+  createUser(data: UserCreateInput!): User!
   updateQuestion(data: QuestionUpdateInput!, where: QuestionWhereUniqueInput!): Question
-  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateQuestionVote(data: QuestionVoteUpdateInput!, where: QuestionVoteWhereUniqueInput!): QuestionVote
+  updateAnswer(data: AnswerUpdateInput!, where: AnswerWhereUniqueInput!): Answer
+  updateAnswerVote(data: AnswerVoteUpdateInput!, where: AnswerVoteWhereUniqueInput!): AnswerVote
+  updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   deleteQuestion(where: QuestionWhereUniqueInput!): Question
-  deleteUser(where: UserWhereUniqueInput!): User
   deleteQuestionVote(where: QuestionVoteWhereUniqueInput!): QuestionVote
+  deleteAnswer(where: AnswerWhereUniqueInput!): Answer
+  deleteAnswerVote(where: AnswerVoteWhereUniqueInput!): AnswerVote
+  deleteUser(where: UserWhereUniqueInput!): User
   upsertQuestion(where: QuestionWhereUniqueInput!, create: QuestionCreateInput!, update: QuestionUpdateInput!): Question!
-  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   upsertQuestionVote(where: QuestionVoteWhereUniqueInput!, create: QuestionVoteCreateInput!, update: QuestionVoteUpdateInput!): QuestionVote!
+  upsertAnswer(where: AnswerWhereUniqueInput!, create: AnswerCreateInput!, update: AnswerUpdateInput!): Answer!
+  upsertAnswerVote(where: AnswerVoteWhereUniqueInput!, create: AnswerVoteCreateInput!, update: AnswerVoteUpdateInput!): AnswerVote!
+  upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
   updateManyQuestions(data: QuestionUpdateInput!, where: QuestionWhereInput): BatchPayload!
-  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   updateManyQuestionVotes(data: QuestionVoteUpdateInput!, where: QuestionVoteWhereInput): BatchPayload!
+  updateManyAnswers(data: AnswerUpdateInput!, where: AnswerWhereInput): BatchPayload!
+  updateManyAnswerVotes(data: AnswerVoteUpdateInput!, where: AnswerVoteWhereInput): BatchPayload!
+  updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
   deleteManyQuestions(where: QuestionWhereInput): BatchPayload!
-  deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyQuestionVotes(where: QuestionVoteWhereInput): BatchPayload!
+  deleteManyAnswers(where: AnswerWhereInput): BatchPayload!
+  deleteManyAnswerVotes(where: AnswerVoteWhereInput): BatchPayload!
+  deleteManyUsers(where: UserWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -76,14 +609,20 @@ type PageInfo {
 
 type Query {
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question]!
-  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   questionVotes(where: QuestionVoteWhereInput, orderBy: QuestionVoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionVote]!
+  answers(where: AnswerWhereInput, orderBy: AnswerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Answer]!
+  answerVotes(where: AnswerVoteWhereInput, orderBy: AnswerVoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [AnswerVote]!
+  users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   question(where: QuestionWhereUniqueInput!): Question
-  user(where: UserWhereUniqueInput!): User
   questionVote(where: QuestionVoteWhereUniqueInput!): QuestionVote
+  answer(where: AnswerWhereUniqueInput!): Answer
+  answerVote(where: AnswerVoteWhereUniqueInput!): AnswerVote
+  user(where: UserWhereUniqueInput!): User
   questionsConnection(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionConnection!
-  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   questionVotesConnection(where: QuestionVoteWhereInput, orderBy: QuestionVoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionVoteConnection!
+  answersConnection(where: AnswerWhereInput, orderBy: AnswerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AnswerConnection!
+  answerVotesConnection(where: AnswerVoteWhereInput, orderBy: AnswerVoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): AnswerVoteConnection!
+  usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -99,6 +638,7 @@ type Question implements Node {
   createdAt: DateTime!
   askedBy(where: UserWhereInput): User
   votes(where: QuestionVoteWhereInput, orderBy: QuestionVoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionVote!]
+  answers(where: AnswerWhereInput, orderBy: AnswerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Answer!]
 }
 
 """A connection to a list of items."""
@@ -116,6 +656,7 @@ input QuestionCreateInput {
   description: String
   askedBy: UserCreateOneWithoutQuestionsInput
   votes: QuestionVoteCreateManyWithoutQuestionInput
+  answers: AnswerCreateManyWithoutQuestionInput
 }
 
 input QuestionCreateManyWithoutAskedByInput {
@@ -123,21 +664,35 @@ input QuestionCreateManyWithoutAskedByInput {
   connect: [QuestionWhereUniqueInput!]
 }
 
+input QuestionCreateOneWithoutAnswersInput {
+  create: QuestionCreateWithoutAnswersInput
+  connect: QuestionWhereUniqueInput
+}
+
 input QuestionCreateOneWithoutVotesInput {
   create: QuestionCreateWithoutVotesInput
   connect: QuestionWhereUniqueInput
+}
+
+input QuestionCreateWithoutAnswersInput {
+  title: String!
+  description: String
+  askedBy: UserCreateOneWithoutQuestionsInput
+  votes: QuestionVoteCreateManyWithoutQuestionInput
 }
 
 input QuestionCreateWithoutAskedByInput {
   title: String!
   description: String
   votes: QuestionVoteCreateManyWithoutQuestionInput
+  answers: AnswerCreateManyWithoutQuestionInput
 }
 
 input QuestionCreateWithoutVotesInput {
   title: String!
   description: String
   askedBy: UserCreateOneWithoutQuestionsInput
+  answers: AnswerCreateManyWithoutQuestionInput
 }
 
 """An edge in a connection."""
@@ -213,6 +768,7 @@ input QuestionUpdateInput {
   description: String
   askedBy: UserUpdateOneWithoutQuestionsInput
   votes: QuestionVoteUpdateManyWithoutQuestionInput
+  answers: AnswerUpdateManyWithoutQuestionInput
 }
 
 input QuestionUpdateManyWithoutAskedByInput {
@@ -224,6 +780,14 @@ input QuestionUpdateManyWithoutAskedByInput {
   upsert: [QuestionUpsertWithWhereUniqueWithoutAskedByInput!]
 }
 
+input QuestionUpdateOneWithoutAnswersInput {
+  create: QuestionCreateWithoutAnswersInput
+  connect: QuestionWhereUniqueInput
+  delete: Boolean
+  update: QuestionUpdateWithoutAnswersDataInput
+  upsert: QuestionUpsertWithoutAnswersInput
+}
+
 input QuestionUpdateOneWithoutVotesInput {
   create: QuestionCreateWithoutVotesInput
   connect: QuestionWhereUniqueInput
@@ -232,21 +796,35 @@ input QuestionUpdateOneWithoutVotesInput {
   upsert: QuestionUpsertWithoutVotesInput
 }
 
+input QuestionUpdateWithoutAnswersDataInput {
+  title: String
+  description: String
+  askedBy: UserUpdateOneWithoutQuestionsInput
+  votes: QuestionVoteUpdateManyWithoutQuestionInput
+}
+
 input QuestionUpdateWithoutAskedByDataInput {
   title: String
   description: String
   votes: QuestionVoteUpdateManyWithoutQuestionInput
+  answers: AnswerUpdateManyWithoutQuestionInput
 }
 
 input QuestionUpdateWithoutVotesDataInput {
   title: String
   description: String
   askedBy: UserUpdateOneWithoutQuestionsInput
+  answers: AnswerUpdateManyWithoutQuestionInput
 }
 
 input QuestionUpdateWithWhereUniqueWithoutAskedByInput {
   where: QuestionWhereUniqueInput!
   data: QuestionUpdateWithoutAskedByDataInput!
+}
+
+input QuestionUpsertWithoutAnswersInput {
+  update: QuestionUpdateWithoutAnswersDataInput!
+  create: QuestionCreateWithoutAnswersInput!
 }
 
 input QuestionUpsertWithoutVotesInput {
@@ -639,6 +1217,9 @@ input QuestionWhereInput {
   votes_every: QuestionVoteWhereInput
   votes_some: QuestionVoteWhereInput
   votes_none: QuestionVoteWhereInput
+  answers_every: AnswerWhereInput
+  answers_some: AnswerWhereInput
+  answers_none: AnswerWhereInput
 }
 
 input QuestionWhereUniqueInput {
@@ -647,8 +1228,10 @@ input QuestionWhereUniqueInput {
 
 type Subscription {
   question(where: QuestionSubscriptionWhereInput): QuestionSubscriptionPayload
-  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
   questionVote(where: QuestionVoteSubscriptionWhereInput): QuestionVoteSubscriptionPayload
+  answer(where: AnswerSubscriptionWhereInput): AnswerSubscriptionPayload
+  answerVote(where: AnswerVoteSubscriptionWhereInput): AnswerVoteSubscriptionPayload
+  user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
 }
 
 type User implements Node {
@@ -659,6 +1242,7 @@ type User implements Node {
   createdAt: DateTime!
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
   questionVotes(where: QuestionVoteWhereInput, orderBy: QuestionVoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [QuestionVote!]
+  answers(where: AnswerWhereInput, orderBy: AnswerOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Answer!]
 }
 
 """A connection to a list of items."""
@@ -677,6 +1261,17 @@ input UserCreateInput {
   password: String!
   questions: QuestionCreateManyWithoutAskedByInput
   questionVotes: QuestionVoteCreateManyWithoutUserInput
+  answers: AnswerCreateManyWithoutAnsweredByInput
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutAnswersInput {
+  create: UserCreateWithoutAnswersInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutQuestionsInput {
@@ -689,11 +1284,20 @@ input UserCreateOneWithoutQuestionVotesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateWithoutAnswersInput {
+  username: String!
+  email: String!
+  password: String!
+  questions: QuestionCreateManyWithoutAskedByInput
+  questionVotes: QuestionVoteCreateManyWithoutUserInput
+}
+
 input UserCreateWithoutQuestionsInput {
   username: String!
   email: String!
   password: String!
   questionVotes: QuestionVoteCreateManyWithoutUserInput
+  answers: AnswerCreateManyWithoutAnsweredByInput
 }
 
 input UserCreateWithoutQuestionVotesInput {
@@ -701,6 +1305,7 @@ input UserCreateWithoutQuestionVotesInput {
   email: String!
   password: String!
   questions: QuestionCreateManyWithoutAskedByInput
+  answers: AnswerCreateManyWithoutAnsweredByInput
 }
 
 """An edge in a connection."""
@@ -774,12 +1379,39 @@ input UserSubscriptionWhereInput {
   node: UserWhereInput
 }
 
+input UserUpdateDataInput {
+  username: String
+  email: String
+  password: String
+  questions: QuestionUpdateManyWithoutAskedByInput
+  questionVotes: QuestionVoteUpdateManyWithoutUserInput
+  answers: AnswerUpdateManyWithoutAnsweredByInput
+}
+
 input UserUpdateInput {
   username: String
   email: String
   password: String
   questions: QuestionUpdateManyWithoutAskedByInput
   questionVotes: QuestionVoteUpdateManyWithoutUserInput
+  answers: AnswerUpdateManyWithoutAnsweredByInput
+}
+
+input UserUpdateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+}
+
+input UserUpdateOneWithoutAnswersInput {
+  create: UserCreateWithoutAnswersInput
+  connect: UserWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
+  update: UserUpdateWithoutAnswersDataInput
+  upsert: UserUpsertWithoutAnswersInput
 }
 
 input UserUpdateOneWithoutQuestionsInput {
@@ -799,11 +1431,20 @@ input UserUpdateOneWithoutQuestionVotesInput {
   upsert: UserUpsertWithoutQuestionVotesInput
 }
 
+input UserUpdateWithoutAnswersDataInput {
+  username: String
+  email: String
+  password: String
+  questions: QuestionUpdateManyWithoutAskedByInput
+  questionVotes: QuestionVoteUpdateManyWithoutUserInput
+}
+
 input UserUpdateWithoutQuestionsDataInput {
   username: String
   email: String
   password: String
   questionVotes: QuestionVoteUpdateManyWithoutUserInput
+  answers: AnswerUpdateManyWithoutAnsweredByInput
 }
 
 input UserUpdateWithoutQuestionVotesDataInput {
@@ -811,6 +1452,17 @@ input UserUpdateWithoutQuestionVotesDataInput {
   email: String
   password: String
   questions: QuestionUpdateManyWithoutAskedByInput
+  answers: AnswerUpdateManyWithoutAnsweredByInput
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
+}
+
+input UserUpsertWithoutAnswersInput {
+  update: UserUpdateWithoutAnswersDataInput!
+  create: UserCreateWithoutAnswersInput!
 }
 
 input UserUpsertWithoutQuestionsInput {
@@ -1020,6 +1672,9 @@ input UserWhereInput {
   questionVotes_every: QuestionVoteWhereInput
   questionVotes_some: QuestionVoteWhereInput
   questionVotes_none: QuestionVoteWhereInput
+  answers_every: AnswerWhereInput
+  answers_some: AnswerWhereInput
+  answers_none: AnswerWhereInput
 }
 
 input UserWhereUniqueInput {
