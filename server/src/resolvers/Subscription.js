@@ -43,8 +43,24 @@ const newAnswer = {
   subscribe: newAnswerSubscribe
 }
 
+function newAnswerVoteSubscribe(parent, args, context, info) {
+  return context.db.subscription.answerVote(
+    {
+      where: {
+        mutation_in: ['CREATED', 'UPDATED']
+      }
+    },
+    info
+  )
+}
+
+const newAnswerVote = {
+  subscribe: newAnswerVoteSubscribe
+}
+
 module.exports = {
   newQuestion,
   newQuestionVote,
-  newAnswer
+  newAnswer,
+  newAnswerVote
 }

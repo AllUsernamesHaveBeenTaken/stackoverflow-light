@@ -25,6 +25,7 @@ export const FEED_QUERY = gql`
           content
           votes {
             id
+            isUpVote
           }
           createdAt
           answeredBy {
@@ -153,7 +154,7 @@ class QuestionList extends PureComponent {
   totalVotes = votes => {
     const totalTrue = votes.filter(vote => vote.isUpVote && vote).length;
     const totalFalse = votes.filter(vote => !vote.isUpVote && vote).length;
-  
+
     return totalTrue - totalFalse;
   };
 
