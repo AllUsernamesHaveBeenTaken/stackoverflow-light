@@ -19,6 +19,7 @@ export const FEED_QUERY = gql`
           isUpVote
         }
         askedBy {
+          id
           username
         }
         createdAt
@@ -31,6 +32,7 @@ export const FEED_QUERY = gql`
           }
           createdAt
           answeredBy {
+            id
             username
           }
         }
@@ -50,6 +52,7 @@ const NEW_QUESTIONS_SUBSCRIPTION = gql`
           isUpVote
         }
         askedBy {
+          id
           username
         }
         createdAt
@@ -61,6 +64,7 @@ const NEW_QUESTIONS_SUBSCRIPTION = gql`
           }
           createdAt
           answeredBy {
+            id
             username
           }
         }
