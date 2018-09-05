@@ -137,9 +137,11 @@ class QuestionList extends PureComponent {
     return new Date(b.createdAt) - new Date(a.createdAt);
   };
 
-  // @TODO add total answers
   sortByTotalVotesAndAnswers = (a, b) => {
-    return b.votes.length - a.votes.length;
+    let totalB = b.votes.length + b.answers.length + b.answers.votes.length;
+    let totalA = a.votes.length + a.answers.length + b.answers.votes.length;
+
+    return totalB - totalA;
   };
 
   render() {
