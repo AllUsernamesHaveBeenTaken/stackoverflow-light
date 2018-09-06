@@ -14,6 +14,7 @@ export default gql`
             isUpVote
           }
           askedBy {
+            id
             username
           }
           createdAt
@@ -25,6 +26,7 @@ export default gql`
             }
             createdAt
             answeredBy {
+              id
               username
             }
           }
