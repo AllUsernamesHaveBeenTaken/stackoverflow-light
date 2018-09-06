@@ -38,9 +38,14 @@ For this assignment I used Facebook's [React library](https://reactjs.org/) and 
 ## Workflow
 
 1. Analyzed the assignment by marking keywords.
-1. Drawed a rough sketch.
-1. Wrote functionalities on post-it's sorted by: back-end, front-end and nice to have's.
-   I picked one post-it at a time in an order that made sense to me to work on.
+2. Drawed a rough sketch.
+
+![Image of sketch](https://i.imgur.com/NezMLmc.jpg)
+
+3. Wrote functionalities on Post-it's sorted by: back-end, front-end and nice to have's.
+   I picked one Post-it at a time in an order that made sense to me to work on.
+   
+![Image of Post-it's](https://i.imgur.com/rJZTImo.jpg)
 
 ## TODO before meeting
 
@@ -59,6 +64,6 @@ This is a list of item I'd like to finish before our meeting.
 
 ## Known issues
 
-- No optimistic UI if a vote gets deleted.
+- No optimistic UI nor subscription if a vote gets deleted.
 
 ## Reflection
