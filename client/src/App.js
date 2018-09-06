@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom';
 
 import './App.css';
 import { QuestionList, AskQuestion, QuestionDetail } from './components/Question';
@@ -10,7 +10,7 @@ import { Login, Signup } from './components/Authentication';
 
 import { FilterProvider } from './Contexts';
 
-const withFilterConsumer = (child) => <FilterConsumer>{context => <child />}</FilterConsumer>
+const withFilterConsumer = child => <FilterConsumer>{context => <child />}</FilterConsumer>;
 
 class App extends Component {
   render() {
@@ -24,7 +24,8 @@ class App extends Component {
             <Route exact path="/signup" component={Signup} />
             <Route exact path="/askquestion" component={AskQuestion} />
             <Route path="/question/:id" component={QuestionDetail} />
-          </Switch>  
+            <Redirect to="/" />
+          </Switch>
         </FilterProvider>
       </div>
     );
