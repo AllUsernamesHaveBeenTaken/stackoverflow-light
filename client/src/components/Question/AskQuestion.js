@@ -1,25 +1,9 @@
 import React, { PureComponent } from 'react';
 import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
-import { FEED_QUERY } from './List';
-
-const ASK_QUESTION_MUTATION = gql`
-  mutation AskQuestionMutation($title: String!, $description: String!) {
-    askQuestion(title: $title, description: $description) {
-      id
-      title
-      description
-      createdAt
-      askedBy {
-        questions {
-          id
-        }
-      }
-    }
-  }
-`;
+import { FEED_QUERY } from '../../graphql/queries';
+import { ASK_QUESTION_MUTATION } from '../../graphql/mutations';
 
 const wrapper = {
   display: 'flex',

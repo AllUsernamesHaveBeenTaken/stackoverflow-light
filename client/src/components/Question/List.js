@@ -1,108 +1,16 @@
 import React, { PureComponent } from 'react';
 import { Query } from 'react-apollo';
-import gql from 'graphql-tag';
+import { withRouter } from 'react-router';
+import PropTypes from 'prop-types';
 
 import QuestionItem from './Item';
 import { FilterConsumer } from '../../Contexts/FilterContext';
 
-export const FEED_QUERY = gql`
-  {
-    feed {
-      count
-      questions {
-        id
-        title
-        votes {
-          id
-          isUpVote
-        }
-        askedBy {
-          username
-        }
-        createdAt
-        answers {
-          id
-          content
-          votes {
-            id
-            isUpVote
-          }
-          createdAt
-          answeredBy {
-            username
-          }
-        }
-      }
-    }
-  }
-`;
-
-const NEW_QUESTIONS_SUBSCRIPTION = gql`
-  subscription {
-    newQuestion {
-      node {
-        id
-        title
-        votes {
-          id
-          isUpVote
-        }
-        askedBy {
-          username
-        }
-        createdAt
-        answers {
-          id
-          content
-          votes {
-            id
-          }
-          createdAt
-          answeredBy {
-            username
-          }
-        }
-      }
-    }
-  }
-`;
-
-const NEW_QUESTION_VOTE_SUBSCRIPTION = gql`
-  subscription {
-    newQuestionVote {
-      node {
-        id
-        isUpVote
-        question {
-          id
-          title
-          votes {
-            id
-            isUpVote
-          }
-          askedBy {
-            username
-          }
-          createdAt
-          answers {
-            id
-            content
-            votes {
-              id
-            }
-            createdAt
-            answeredBy {
-              username
-            }
-          }
-        }
-        user {
-          id
-        }
-      }
-    }
-  }
-`;
+import { FEED_QUERY } from '../../graphql/queries';
+import {
+  NEW_QUESTIONS_SUBSCRIPTION,
+  NEW_QUESTION_VOTE_SUBSCRIPTION
+} from '../../graphql/subscriptions';
 
 const feedWrapper = {
   marginLeft: 100
@@ -149,12 +57,9 @@ class QuestionList extends PureComponent {
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const newQuestion = subscriptionData.data.newQuestion.node;
-        console.log(prev);
 
         const idExists =
           prev.feed.questions.filter(question => question.id === newQuestion.id).length > 0;
-
-        console.log(idExists);
 
         if (idExists) return prev;
 
@@ -210,6 +115,7 @@ class QuestionList extends PureComponent {
 
   render() {
     const { filter } = this.state;
+    const { history } = this.props;
 
     return (
       <div>
@@ -241,23 +147,23 @@ class QuestionList extends PureComponent {
                 this.subscribeToNewQuestionVotes(subscribeToMore);
 
                 return (
-                  <div>
-                    <div style={feedWrapper}>
-                      {data.feed.questions
-                        .filter(({ title }) => title.toLowerCase().includes(filter.toLowerCase()))
-                        .sort((a, b) => this.sort(a, b))
-                        .map(({ id, votes, title, askedBy, createdAt, answers }) => (
-                          <QuestionItem
-                            style={questionStyle}
-                            key={id}
-                            votes={votes}
-                            answers={answers.length}
-                            title={title}
-                            username={askedBy.username}
-                            date={createdAt}
-                          />
-                        ))}
-                    </div>
+                  <div style={feedWrapper}>
+                    {data.feed.questions
+                      .filter(({ title }) => title.toLowerCase().includes(filter.toLowerCase()))
+                      .sort((a, b) => this.sort(a, b))
+                      .map(({ id, votes, title, askedBy, createdAt, answers }) => (
+                        <QuestionItem
+                          style={questionStyle}
+                          key={id}
+                          votes={votes}
+                          answers={answers.length}
+                          title={title}
+                          username={askedBy.username}
+                          date={createdAt}
+                          history={history}
+                          id={id}
+                        />
+                      ))}
                   </div>
                 );
               }}
@@ -269,4 +175,8 @@ class QuestionList extends PureComponent {
   }
 }
 
-export default QuestionList;
+QuestionList.propTypes = {
+  history: PropTypes.shape({}).isRequired
+};
+
+export default withRouter(QuestionList);

@@ -1,18 +1,11 @@
 import React, { PureComponent } from 'react';
 import { Link } from 'react-router-dom';
 import { Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
 import { AUTH_TOKEN } from '../../utils/constants';
 
-const SIGNUP_MUTATION = gql`
-  mutation SignupMutation($email: String!, $password: String!, $username: String!) {
-    signup(email: $email, password: $password, username: $username) {
-      token
-    }
-  }
-`;
+import { SIGNUP_MUTATION } from '../../graphql/mutations';
 
 const wrapper = {
   display: 'flex',
