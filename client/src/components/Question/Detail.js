@@ -3,6 +3,8 @@ import { Query, Mutation } from 'react-apollo';
 import TimeAgo from 'react-timeago';
 import PropTypes from 'prop-types';
 
+import { Authorize } from '../Authentication';
+
 import {
   NEW_QUESTION_VOTE_SUBSCRIPTION,
   NEW_ANSWER_VOTE_SUBSCRIPTION
@@ -146,35 +148,39 @@ class QuestionDetail extends PureComponent {
                   <p style={titleStyle}>{title}</p>
                   <p style={descriptionStyle}>{description}</p>
                   <div style={voteWrapper}>
-                    <Mutation
-                      mutation={VOTE_ON_QUESTION_MUTATION}
-                      variables={{ questionId: id, isUpVote: true }}
-                    >
-                      {mutation => (
-                        <button
-                          onClick={mutation}
-                          style={{ ...voteItem, cursor: 'pointer' }}
-                          type="button"
-                        >
-                          upvote
-                        </button>
-                      )}
-                    </Mutation>
-                    <p style={voteItem}>{totalVotes(votes)}</p>
-                    <Mutation
-                      mutation={VOTE_ON_QUESTION_MUTATION}
-                      variables={{ questionId: id, isUpVote: false }}
-                    >
-                      {mutation => (
-                        <button
-                          onClick={mutation}
-                          style={{ ...voteItem, cursor: 'pointer' }}
-                          type="button"
-                        >
-                          downvote
-                        </button>
-                      )}
-                    </Mutation>
+                    <Authorize>
+                      <Mutation
+                        mutation={VOTE_ON_QUESTION_MUTATION}
+                        variables={{ questionId: id, isUpVote: true }}
+                      >
+                        {mutation => (
+                          <button
+                            onClick={mutation}
+                            style={{ ...voteItem, cursor: 'pointer' }}
+                            type="button"
+                          >
+                            upvote
+                          </button>
+                        )}
+                      </Mutation>
+                    </Authorize>
+                    <p style={voteItem}>{`${totalVotes(votes)} vote(s)`}</p>
+                    <Authorize>
+                      <Mutation
+                        mutation={VOTE_ON_QUESTION_MUTATION}
+                        variables={{ questionId: id, isUpVote: false }}
+                      >
+                        {mutation => (
+                          <button
+                            onClick={mutation}
+                            style={{ ...voteItem, cursor: 'pointer' }}
+                            type="button"
+                          >
+                            downvote
+                          </button>
+                        )}
+                      </Mutation>
+                    </Authorize>
                   </div>
                 </div>
                 <div>
@@ -183,35 +189,39 @@ class QuestionDetail extends PureComponent {
                       <p>{answer.content}</p>
                       <div style={answerFooter}>
                         <div style={{ display: 'flex' }}>
-                          <Mutation
-                            mutation={VOTE_ON_ANSWER_MUTATION}
-                            variables={{ answerId: answer.id, isUpVote: true }}
-                          >
-                            {mutation => (
-                              <button
-                                onClick={mutation}
-                                style={{ ...voteItem, cursor: 'pointer' }}
-                                type="button"
-                              >
-                                upvote
-                              </button>
-                            )}
-                          </Mutation>
-                          <p style={voteItem}>{totalVotes(answer.votes)}</p>
-                          <Mutation
-                            mutation={VOTE_ON_ANSWER_MUTATION}
-                            variables={{ answerId: answer.id, isUpVote: false }}
-                          >
-                            {mutation => (
-                              <button
-                                onClick={mutation}
-                                style={{ ...voteItem, cursor: 'pointer' }}
-                                type="button"
-                              >
-                                downvote
-                              </button>
-                            )}
-                          </Mutation>
+                          <Authorize>
+                            <Mutation
+                              mutation={VOTE_ON_ANSWER_MUTATION}
+                              variables={{ answerId: answer.id, isUpVote: true }}
+                            >
+                              {mutation => (
+                                <button
+                                  onClick={mutation}
+                                  style={{ ...voteItem, cursor: 'pointer' }}
+                                  type="button"
+                                >
+                                  upvote
+                                </button>
+                              )}
+                            </Mutation>
+                          </Authorize>
+                          <p style={voteItem}>{`${totalVotes(answer.votes)} vote(s)`}</p>
+                          <Authorize>
+                            <Mutation
+                              mutation={VOTE_ON_ANSWER_MUTATION}
+                              variables={{ answerId: answer.id, isUpVote: false }}
+                            >
+                              {mutation => (
+                                <button
+                                  onClick={mutation}
+                                  style={{ ...voteItem, cursor: 'pointer' }}
+                                  type="button"
+                                >
+                                  downvote
+                                </button>
+                              )}
+                            </Mutation>
+                          </Authorize>
                         </div>
                         <div style={smallRightInfo}>
                           <p>{`answered by ${answer.answeredBy.username}`}</p>
@@ -220,33 +230,35 @@ class QuestionDetail extends PureComponent {
                       </div>
                     </div>
                   ))}
-                  <div style={inputWrapper}>
-                    {answers.length <= 0 ? (
-                      <p style={inputTitle}>Be the first to answer</p>
-                    ) : (
-                      <p style={inputTitle}>Propose an answer</p>
-                    )}
-                    <textarea
-                      style={input}
-                      rows={10}
-                      name="answer"
-                      value={answerText}
-                      type="text"
-                      placeholder="Propose a correct answer to the question."
-                      onChange={({ target }) => this.setState({ answerText: target.value })}
-                    />
-                    <Mutation
-                      mutation={ANSWER_ON_QUESTION_MUTATION}
-                      variables={{ questionId: id, content: answerText }}
-                      onCompleted={() => this.postAnswerComplete()}
-                    >
-                      {mutation => (
-                        <button onClick={mutation} type="button" style={button}>
-                          Answer
-                        </button>
+                  <Authorize>
+                    <div style={inputWrapper}>
+                      {answers.length <= 0 ? (
+                        <p style={inputTitle}>Be the first to answer</p>
+                      ) : (
+                        <p style={inputTitle}>Propose an answer</p>
                       )}
-                    </Mutation>
-                  </div>
+                      <textarea
+                        style={input}
+                        rows={10}
+                        name="answer"
+                        value={answerText}
+                        type="text"
+                        placeholder="Propose a correct answer to the question."
+                        onChange={({ target }) => this.setState({ answerText: target.value })}
+                      />
+                      <Mutation
+                        mutation={ANSWER_ON_QUESTION_MUTATION}
+                        variables={{ questionId: id, content: answerText }}
+                        onCompleted={() => this.postAnswerComplete()}
+                      >
+                        {mutation => (
+                          <button onClick={mutation} type="button" style={button}>
+                            Answer
+                          </button>
+                        )}
+                      </Mutation>
+                    </div>
+                  </Authorize>
                 </div>
               </div>
             </div>
