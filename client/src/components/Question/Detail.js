@@ -1,157 +1,18 @@
 import React, { PureComponent } from 'react';
 import { Query, Mutation } from 'react-apollo';
-import gql from 'graphql-tag';
 import TimeAgo from 'react-timeago';
 import PropTypes from 'prop-types';
 
-const QUESTION_QUERY = gql`
-  query QuestionQuery($id: ID!) {
-    question(id: $id) {
-      id
-      title
-      createdAt
-      description
-      votes {
-        id
-        isUpVote
-      }
-      askedBy {
-        id
-        username
-      }
-      answers {
-        id
-        createdAt
-        content
-        votes {
-          id
-          isUpVote
-        }
-        answeredBy {
-          id
-          username
-        }
-      }
-    }
-  }
-`;
-
-const ANSWER_ON_QUESTION_MUTATION = gql`
-  mutation AnswerOnQuestionMutation($questionId: ID!, $content: String!) {
-    answerOnQuestion(questionId: $questionId, content: $content) {
-      id
-      createdAt
-      content
-      votes {
-        id
-        isUpVote
-      }
-      answeredBy {
-        id
-        username
-      }
-    }
-  }
-`;
-
-const NEW_ANSWERS_SUBSCRIPTION = gql`
-  subscription {
-    newAnswer {
-      node {
-        id
-        createdAt
-        content
-        votes {
-          id
-          isUpVote
-        }
-        answeredBy {
-          id
-          username
-        }
-      }
-    }
-  }
-`;
-
-const VOTE_ON_QUESTION_MUTATION = gql`
-  mutation VoteOnQuestionMutation($questionId: ID!, $isUpVote: Boolean!) {
-    voteOnQuestion(questionId: $questionId, isUpVote: $isUpVote) {
-      id
-    }
-  }
-`;
-
-const VOTE_ON_ANSWER_MUTATION = gql`
-  mutation VoteOnAnswerMutation($answerId: ID!, $isUpVote: Boolean!) {
-    voteOnAnswer(answerId: $answerId, isUpVote: $isUpVote) {
-      id
-    }
-  }
-`;
-
-const NEW_QUESTION_VOTE_SUBSCRIPTION = gql`
-  subscription {
-    newQuestionVote {
-      node {
-        id
-        isUpVote
-        question {
-          id
-          title
-          votes {
-            id
-            isUpVote
-          }
-          askedBy {
-            id
-            username
-          }
-          createdAt
-          answers {
-            id
-            content
-            votes {
-              id
-            }
-            createdAt
-            answeredBy {
-              id
-              username
-            }
-          }
-        }
-        user {
-          id
-        }
-      }
-    }
-  }
-`;
-
-const NEW_ANSWER_VOTE_SUBSCRIPTION = gql`
-  subscription {
-    newAnswerVote {
-      node {
-        id
-        isUpVote
-        answer {
-          id
-          createdAt
-          content
-          votes {
-            id
-            isUpVote
-          }
-          answeredBy {
-            id
-            username
-          }
-        }
-      }
-    }
-  }
-`;
+import {
+  NEW_QUESTION_VOTE_SUBSCRIPTION,
+  NEW_ANSWER_VOTE_SUBSCRIPTION
+} from '../../graphql/subscriptions';
+import { QUESTION_QUERY } from '../../graphql/queries';
+import {
+  ANSWER_ON_QUESTION_MUTATION,
+  VOTE_ON_QUESTION_MUTATION,
+  VOTE_ON_ANSWER_MUTATION
+} from '../../graphql/mutations';
 
 const wrapper = {
   display: 'flex',
