@@ -248,23 +248,6 @@ class QuestionDetail extends PureComponent {
     this.setState({ answerText: '' });
   };
 
-  subscribeToNewAnswers = subscribeToMore => {
-    subscribeToMore({
-      document: NEW_ANSWERS_SUBSCRIPTION,
-      updateQuery: (prev, { subscriptionData }) => {
-        if (!subscriptionData.data) return prev;
-        const newAnswer = subscriptionData.data.newAnswer.node;
-        console.log([newAnswer, ...prev.question.answers]);
-        const glueAnswers = [newAnswer, ...prev.question.answers];
-        return Object.assign({}, prev, {
-          question: {
-            answers: glueAnswers
-          }
-        });
-      }
-    });
-  };
-
   subscribeToNewQuestionVotes = subscribeToMore => {
     subscribeToMore({
       document: NEW_QUESTION_VOTE_SUBSCRIPTION
@@ -288,7 +271,6 @@ class QuestionDetail extends PureComponent {
 
           const { askedBy, createdAt, title, description, answers, id, votes } = data.question;
 
-          this.subscribeToNewAnswers(subscribeToMore);
           this.subscribeToNewQuestionVotes(subscribeToMore);
           this.subscribeToNewAnswerVotes(subscribeToMore);
 
@@ -396,21 +378,6 @@ class QuestionDetail extends PureComponent {
                       mutation={ANSWER_ON_QUESTION_MUTATION}
                       variables={{ questionId: id, content: answerText }}
                       onCompleted={() => this.postAnswerComplete()}
-                      update={(store, { data: { answerOnQuestion } }) => {
-                        const queryData = store.readQuery({
-                          query: QUESTION_QUERY,
-                          variables: { id }
-                        });
-                        queryData.question.answers.unshift(answerOnQuestion);
-                        console.log(queryData);
-                        console.log(id);
-
-                        store.writeQuery({
-                          query: QUESTION_QUERY,
-                          variables: { id },
-                          queryData
-                        });
-                      }}
                     >
                       {mutation => (
                         <button onClick={mutation} type="button" style={button}>
