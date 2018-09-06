@@ -53,14 +53,15 @@ This is a list of item I'd like to finish before our meeting.
 
 - [ ] Cache new answers for optimistic UI.
 - [ ] Subscribe to new answers.
-- [ ] Make an higher order component for components that need authorization.
+- [x] Make an higher order component for components that need authorization.
 - [ ] Sort answers on total votes.
-- [ ] Redirect routes to '/' if the route does not exists.
+- [x] Redirect routes to '/' if the route does not exists.
 
 ## What's not included?
 
 - Update or edit a question.
 - Update or edit an answer.
+- Form validation
 
 ## Known issues
 
